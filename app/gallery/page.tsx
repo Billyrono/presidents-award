@@ -1,34 +1,85 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { PageHero } from '@/components/page-hero'
 import { ScrollReveal } from '@/components/scroll-reveal'
-
 
 const categories = ['All', 'Adventure', 'Service', 'Skills', 'Recreation', 'Recognition']
 
 const galleryImages = [
-    { title: 'Aberdares Expedition', category: 'Adventure', description: 'Navigating through the challenging terrain of Aberdares National Park.' },
-    { title: 'Team Building', category: 'Recreation', description: 'Building camaraderie through group activities and university sports.' },
-    { title: 'Kianyaga Water Project', category: 'Service', description: 'Gold Residential project: water project at Kianyaga Children\'s Home.' },
-    { title: 'Leadership Workshop', category: 'Skills', description: 'Interactive leadership and public speaking development sessions.' },
-    { title: 'Ngong Hills Trek', category: 'Adventure', description: 'Traversing the scenic seven ridges of Ngong Hills.' },
-    { title: 'Gold Award Ceremony', category: 'Recognition', description: 'Gold Award presentation at State House by the President of Kenya.' },
-    { title: 'First Aid Training', category: 'Skills', description: 'Learning life-saving first aid skills during skills development.' },
-    { title: 'Raimu Special Unit', category: 'Service', description: 'Thematic painting of classrooms for children with special needs.' },
-    { title: 'University Sports', category: 'Recreation', description: 'Physical recreation activities promoting fitness and wellness.' },
-    { title: 'Camp Life', category: 'Adventure', description: 'Bonding during adventurous journeys in the Aberdares.' },
-    { title: 'Mentorship Program', category: 'Service', description: 'Awardees mentoring younger participants in skills development.' },
-    { title: 'Award Group Photo', category: 'Recognition', description: 'Celebrating award completion at Kirinyaga University.' },
-]
-
-const placeholderColors = [
-    'bg-teal-600/10',
-    'bg-teal-600/8',
-    'bg-teal-600/12',
-    'bg-teal-600/6',
-    'bg-teal-600/10',
-    'bg-teal-600/14',
+    {
+        title: 'Aberdares Expedition',
+        category: 'Adventure',
+        description: 'Navigating through the challenging terrain of Aberdares National Park.',
+        src: '/Gallery/Adventure/Aberdare/IMG_4627.jpg',
+    },
+    {
+        title: 'Ngong Hills Trek',
+        category: 'Adventure',
+        description: 'Traversing the scenic seven ridges of Ngong Hills.',
+        src: '/Gallery/Adventure/Ngong/IMG_20250201_112340.jpg',
+    },
+    {
+        title: 'Kianyaga Water Project',
+        category: 'Service',
+        description: 'Gold Residential project: water project at Kianyaga Children\'s Home.',
+        src: '/Gallery/Service/Water project/f84f82b4-15a0-4918-a077-3e264a3ef870.jpg',
+    },
+    {
+        title: 'Gold Award Ceremony',
+        category: 'Recognition',
+        description: 'Gold Award presentation at State House by the President of Kenya.',
+        src: '/Gallery/Recognition/Award ceremony/award-ceremony.jpg',
+    },
+    {
+        title: 'Award Group Photo',
+        category: 'Recognition',
+        description: 'Celebrating award completion at Kirinyaga University.',
+        src: '/Gallery/Recognition/Award group/DSC_3006.JPG',
+    },
+    {
+        title: 'Leadership Workshop',
+        category: 'Skills',
+        description: 'Interactive leadership and public speaking development sessions.',
+        src: null, // placeholder
+    },
+    {
+        title: 'First Aid Training',
+        category: 'Skills',
+        description: 'Learning life-saving first aid skills during skills development.',
+        src: null, // placeholder
+    },
+    {
+        title: 'University Sports',
+        category: 'Recreation',
+        description: 'Physical recreation activities promoting fitness and wellness.',
+        src: null, // placeholder
+    },
+    {
+        title: 'Team Building',
+        category: 'Recreation',
+        description: 'Building camaraderie through group activities and university sports.',
+        src: null, // placeholder
+    },
+    {
+        title: 'Camp Life',
+        category: 'Adventure',
+        description: 'Bonding during adventurous journeys in the Aberdares.',
+        src: null, // placeholder
+    },
+    {
+        title: 'Mentorship Program',
+        category: 'Service',
+        description: 'Awardees mentoring younger participants in skills development.',
+        src: null, // placeholder
+    },
+    {
+        title: 'Raimu Special Unit',
+        category: 'Service',
+        description: 'Thematic painting of classrooms for children with special needs.',
+        src: null, // placeholder
+    },
 ]
 
 export default function GalleryPage() {
@@ -74,16 +125,25 @@ export default function GalleryPage() {
                         {filtered.map((image, index) => (
                             <ScrollReveal key={`${activeCategory}-${index}`} delay={index * 60}>
                                 <div className="group relative overflow-hidden rounded-2xl aspect-[4/3] border border-primary/10 hover:border-primary/30 transition-all duration-300 cursor-pointer hover:shadow-xl">
-                                    {/* Solid placeholder */}
-                                    <div className={`absolute inset-0 ${placeholderColors[index % placeholderColors.length]}`} />
-
-                                    {/* Center label */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="text-center px-4">
-                                            <p className="text-primary/40 font-display text-lg font-bold">{image.title}</p>
-                                            <p className="text-muted-foreground/30 text-xs mt-1">{image.category}</p>
+                                    {image.src ? (
+                                        <Image
+                                            src={image.src}
+                                            alt={image.title}
+                                            fill
+                                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                        />
+                                    ) : (
+                                        /* Placeholder for missing images */
+                                        <div className="absolute inset-0 bg-teal-600/8">
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <div className="text-center px-4">
+                                                    <p className="text-primary/40 font-display text-lg font-bold">{image.title}</p>
+                                                    <p className="text-muted-foreground/40 text-xs mt-1">Photo coming soon</p>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
 
                                     {/* Hover overlay */}
                                     <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-6">

@@ -10,7 +10,7 @@ export function Hero() {
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
       {/* Background Image */}
       <Image
-        src="/hero-bg.jpg"
+        src="/Hero/Home/hero-bg.jpg"
         alt="President's Award Kirinyaga University"
         fill
         className="object-cover -z-10"
@@ -42,7 +42,7 @@ export function Hero() {
           <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-white rounded-lg px-8 py-6 text-base font-semibold">
             <Link href="/join">Start Your Journey</Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="rounded-lg px-8 py-6 text-base font-semibold border-2 border-white text-white hover:bg-white/10">
+          <Button asChild variant="outline" size="lg" className="rounded-lg px-8 py-6 text-base font-semibold border-2 border-white text-white bg-white/10 hover:bg-white/20">
             <Link href="/about">Learn More</Link>
           </Button>
         </div>
@@ -62,7 +62,7 @@ export function Hero() {
             <p className="text-white/80 text-sm md:text-base">Residential Projects</p>
           </div>
           <div className="text-center">
-            <div className="text-4xl md:text-5xl font-display font-bold text-[#C9A84C] mb-2">4</div>
+            <div className="text-4xl md:text-5xl font-display font-bold text-[#C9A84C] mb-2">5</div>
             <p className="text-white/80 text-sm md:text-base">Core Pillars</p>
           </div>
         </div>

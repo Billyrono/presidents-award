@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Hero } from '@/components/hero'
 import { ScrollReveal } from '@/components/scroll-reveal'
-import { Zap, Heart, Compass, Dumbbell, ArrowRight, Award, Users, Mountain, Tent } from 'lucide-react'
+import { Zap, Heart, Compass, Dumbbell, Home, ArrowRight, Award, Users, Mountain, Tent } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 const pillars = [
@@ -9,6 +9,7 @@ const pillars = [
   { icon: Zap, title: 'Skills Development', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600' },
   { icon: Dumbbell, title: 'Physical Recreation', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600' },
   { icon: Compass, title: 'Adventurous Journey', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600' },
+  { icon: Home, title: 'Gold Residential', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600' },
 ]
 
 const stats = [
@@ -60,12 +61,12 @@ export default function HomePage() {
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-5xl font-display font-bold mb-6 text-foreground">Core Activities</h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Four key sections that shape well-rounded, responsible young leaders
+                Five key sections that shape well-rounded, responsible young leaders
               </p>
               <div className="w-24 h-1 bg-primary mx-auto mt-6" />
             </div>
           </ScrollReveal>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-10">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 mb-10">
             {pillars.map((pillar, i) => {
               const Icon = pillar.icon
               return (
