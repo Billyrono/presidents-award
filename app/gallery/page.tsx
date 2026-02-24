@@ -1,93 +1,55 @@
 'use client'
 
-import { useState } from 'react'
-import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import { PageHero } from '@/components/page-hero'
 import { ScrollReveal } from '@/components/scroll-reveal'
-
-const categories = ['All', 'Adventure', 'Service', 'Skills', 'Recreation', 'Recognition']
-
-const galleryImages = [
-    {
-        title: 'Aberdares Expedition',
-        category: 'Adventure',
-        description: 'Navigating through the challenging terrain of Aberdares National Park.',
-        src: '/Gallery/Adventure/Aberdare/IMG_4627.jpg',
-    },
-    {
-        title: 'Ngong Hills Trek',
-        category: 'Adventure',
-        description: 'Traversing the scenic seven ridges of Ngong Hills.',
-        src: '/Gallery/Adventure/Ngong/IMG_20250201_112340.jpg',
-    },
-    {
-        title: 'Kianyaga Water Project',
-        category: 'Service',
-        description: 'Gold Residential project: water project at Kianyaga Children\'s Home.',
-        src: '/Gallery/Service/Water project/f84f82b4-15a0-4918-a077-3e264a3ef870.jpg',
-    },
-    {
-        title: 'Gold Award Ceremony',
-        category: 'Recognition',
-        description: 'Gold Award presentation at State House by the President of Kenya.',
-        src: '/Gallery/Recognition/Award ceremony/award-ceremony.jpg',
-    },
-    {
-        title: 'Award Group Photo',
-        category: 'Recognition',
-        description: 'Celebrating award completion at Kirinyaga University.',
-        src: '/Gallery/Recognition/Award group/DSC_3006.JPG',
-    },
-    {
-        title: 'Leadership Workshop',
-        category: 'Skills',
-        description: 'Interactive leadership and public speaking development sessions.',
-        src: null, // placeholder
-    },
-    {
-        title: 'First Aid Training',
-        category: 'Skills',
-        description: 'Learning life-saving first aid skills during skills development.',
-        src: null, // placeholder
-    },
-    {
-        title: 'University Sports',
-        category: 'Recreation',
-        description: 'Physical recreation activities promoting fitness and wellness.',
-        src: null, // placeholder
-    },
-    {
-        title: 'Team Building',
-        category: 'Recreation',
-        description: 'Building camaraderie through group activities and university sports.',
-        src: null, // placeholder
-    },
-    {
-        title: 'Camp Life',
-        category: 'Adventure',
-        description: 'Bonding during adventurous journeys in the Aberdares.',
-        src: null, // placeholder
-    },
-    {
-        title: 'Mentorship Program',
-        category: 'Service',
-        description: 'Awardees mentoring younger participants in skills development.',
-        src: null, // placeholder
-    },
-    {
-        title: 'Raimu Special Unit',
-        category: 'Service',
-        description: 'Thematic painting of classrooms for children with special needs.',
-        src: null, // placeholder
-    },
-]
+import { getGallery } from '@/lib/content'
+import { toDirectImageUrl } from '@/lib/content'
+import type { GalleryImage as GalleryImageType } from '@/lib/types'
+import { X, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react'
 
 export default function GalleryPage() {
     const [activeCategory, setActiveCategory] = useState('All')
+    const [galleryImages, setGalleryImages] = useState<GalleryImageType[]>([])
+    const [loading, setLoading] = useState(true)
+    const [categories, setCategories] = useState<string[]>(['All'])
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+
+    useEffect(() => {
+        getGallery().then(data => {
+            setGalleryImages(data)
+            const cats = ['All', ...new Set(data.map(img => img.category).filter(Boolean))]
+            setCategories(cats)
+            setLoading(false)
+        })
+    }, [])
 
     const filtered = activeCategory === 'All'
         ? galleryImages
         : galleryImages.filter(img => img.category === activeCategory)
+
+    const lightboxImage = lightboxIndex !== null ? filtered[lightboxIndex] : null
+
+    const goPrev = () => {
+        if (lightboxIndex !== null && lightboxIndex > 0) setLightboxIndex(lightboxIndex - 1)
+    }
+    const goNext = () => {
+        if (lightboxIndex !== null && lightboxIndex < filtered.length - 1) setLightboxIndex(lightboxIndex + 1)
+    }
+
+    // Keyboard navigation
+    useEffect(() => {
+        if (lightboxIndex === null) return
+        const handler = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setLightboxIndex(null)
+            if (e.key === 'ArrowLeft') goPrev()
+            if (e.key === 'ArrowRight') goNext()
+        }
+        window.addEventListener('keydown', handler)
+        return () => window.removeEventListener('keydown', handler)
+    })
+
+
 
     return (
         <>
@@ -121,48 +83,125 @@ export default function GalleryPage() {
             {/* Gallery Grid */}
             <section className="py-16 px-4 md:px-8 bg-background">
                 <div className="max-w-6xl mx-auto">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filtered.map((image, index) => (
-                            <ScrollReveal key={`${activeCategory}-${index}`} delay={index * 60}>
-                                <div className="group relative overflow-hidden rounded-2xl aspect-[4/3] border border-primary/10 hover:border-primary/30 transition-all duration-300 cursor-pointer hover:shadow-xl">
-                                    {image.src ? (
-                                        <Image
-                                            src={image.src}
-                                            alt={image.title}
-                                            fill
-                                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                        />
-                                    ) : (
-                                        /* Placeholder for missing images */
-                                        <div className="absolute inset-0 bg-teal-600/8">
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="text-center px-4">
-                                                    <p className="text-primary/40 font-display text-lg font-bold">{image.title}</p>
-                                                    <p className="text-muted-foreground/40 text-xs mt-1">Photo coming soon</p>
+                    {loading ? (
+                        <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" /></div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {filtered.map((image, index) => {
+                                const displayUrl = toDirectImageUrl(image.image_url)
+                                return (
+                                    <ScrollReveal key={image.id} delay={index * 60}>
+                                        <div
+                                            className="group relative overflow-hidden rounded-2xl aspect-[4/3] border border-primary/10 hover:border-primary/30 transition-all duration-300 cursor-pointer hover:shadow-xl"
+                                            onClick={() => displayUrl && setLightboxIndex(index)}
+                                        >
+                                            {displayUrl ? (
+                                                // eslint-disable-next-line @next/next/no-img-element
+                                                <img
+                                                    src={displayUrl}
+                                                    alt={image.title}
+                                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                    style={{ objectPosition: `center ${image.focus_point ?? 50}%` }}
+                                                />
+                                            ) : image.coming_soon ? (
+                                                <div className="absolute inset-0 bg-[#C9A84C]/8">
+                                                    <div className="absolute inset-0 flex items-center justify-center">
+                                                        <div className="text-center px-4">
+                                                            <p className="text-[#C9A84C]/60 font-display text-lg font-bold">{image.title}</p>
+                                                            <p className="text-muted-foreground/50 text-xs mt-1">Coming Soon</p>
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                            ) : (
+                                                <div className="absolute inset-0 bg-teal-600/8">
+                                                    <div className="absolute inset-0 flex items-center justify-center">
+                                                        <div className="text-center px-4">
+                                                            <p className="text-primary/40 font-display text-lg font-bold">{image.title}</p>
+                                                            <p className="text-muted-foreground/40 text-xs mt-1">Photo coming soon</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Hover overlay */}
+                                            <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-6">
+                                                <span className="text-teal-400 text-xs font-bold uppercase tracking-wider mb-1">{image.category}</span>
+                                                <h3 className="text-white font-display font-bold text-lg mb-1">{image.title}</h3>
+                                                <p className="text-white/80 text-sm">{image.description}</p>
+                                                {displayUrl && (
+                                                    <div className="absolute top-4 right-4">
+                                                        <ZoomIn className="w-5 h-5 text-white/60" />
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
-                                    )}
+                                    </ScrollReveal>
+                                )
+                            })}
+                        </div>
+                    )}
 
-                                    {/* Hover overlay */}
-                                    <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-6">
-                                        <span className="text-teal-400 text-xs font-bold uppercase tracking-wider mb-1">{image.category}</span>
-                                        <h3 className="text-white font-display font-bold text-lg mb-1">{image.title}</h3>
-                                        <p className="text-white/80 text-sm">{image.description}</p>
-                                    </div>
-                                </div>
-                            </ScrollReveal>
-                        ))}
-                    </div>
-
-                    {filtered.length === 0 && (
+                    {!loading && filtered.length === 0 && (
                         <div className="text-center py-20">
                             <p className="text-muted-foreground text-lg">No images in this category yet.</p>
                         </div>
                     )}
                 </div>
             </section>
+
+            {/* ───── Lightbox ───── */}
+            {lightboxImage && (() => {
+                const lightboxUrl = toDirectImageUrl(lightboxImage.image_url)
+                return (
+                    <div
+                        className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
+                        onClick={() => setLightboxIndex(null)}
+                    >
+                        {/* Close */}
+                        <button className="absolute top-4 right-4 p-2 text-white/70 hover:text-white transition-colors z-10" onClick={() => setLightboxIndex(null)}>
+                            <X className="w-7 h-7" />
+                        </button>
+
+                        {/* Prev */}
+                        {lightboxIndex !== null && lightboxIndex > 0 && (
+                            <button
+                                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors z-10"
+                                onClick={(e) => { e.stopPropagation(); goPrev() }}
+                            >
+                                <ChevronLeft className="w-6 h-6" />
+                            </button>
+                        )}
+
+                        {/* Next */}
+                        {lightboxIndex !== null && lightboxIndex < filtered.length - 1 && (
+                            <button
+                                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors z-10"
+                                onClick={(e) => { e.stopPropagation(); goNext() }}
+                            >
+                                <ChevronRight className="w-6 h-6" />
+                            </button>
+                        )}
+
+                        {/* Image — full view, no crop */}
+                        <div className="max-w-[90vw] max-h-[85vh] flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
+                            {lightboxUrl && (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                    src={lightboxUrl}
+                                    alt={lightboxImage.title}
+                                    className="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl"
+                                />
+                            )}
+                            <div className="text-center mt-4">
+                                <span className="text-teal-400 text-xs font-bold uppercase tracking-wider">{lightboxImage.category}</span>
+                                <h3 className="text-white font-display font-bold text-lg mt-1">{lightboxImage.title}</h3>
+                                {lightboxImage.description && <p className="text-white/60 text-sm mt-1">{lightboxImage.description}</p>}
+                                <p className="text-white/30 text-xs mt-2">{lightboxIndex !== null ? lightboxIndex + 1 : 0} / {filtered.length}</p>
+                            </div>
+                        </div>
+                    </div>
+                )
+            })()}
         </>
     )
 }

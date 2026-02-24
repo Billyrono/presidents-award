@@ -1,52 +1,12 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import { PageHero } from '@/components/page-hero'
 import { ScrollReveal } from '@/components/scroll-reveal'
 import { Calendar, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
-
-const newsItems = [
-    {
-        date: 'Recent',
-        title: 'Gold Award Ceremony at State House',
-        description: '20 members of the Kirinyaga University chapter received their Gold Award at the Kenyan State House by the President of Kenya — a distinguished achievement underscoring the highest level of dedication and excellence.',
-        category: 'Recognition',
-        featured: true,
-    },
-    {
-        date: 'Recent',
-        title: 'New Intake: Open Registration',
-        description: 'The chapter is welcoming new Awardees from all faculties at Kirinyaga University. Join us and begin your journey through Bronze, Silver, or Gold award levels.',
-        category: 'Programs',
-        featured: true,
-    },
-    {
-        date: 'Completed',
-        title: 'Raimu Special Unit Residential Project',
-        description: 'Gold-level awardees completed thematic painting of two classrooms at Raimu Special Unit, creating a friendly and inspiring learning environment for children with special needs.',
-        category: 'Service',
-        featured: false,
-    },
-    {
-        date: 'Completed',
-        title: 'Kianyaga Children\'s Home Water Project',
-        description: 'A Gold Residential Project delivering a water solution to enhance access to basic needs for vulnerable children at Kianyaga Children\'s Home.',
-        category: 'Service',
-        featured: false,
-    },
-    {
-        date: 'Completed',
-        title: 'Ngong Hills Adventurous Journey',
-        description: 'Participants traversed the Ngong Hills ridges in small teams, building determination, physical effort, perseverance and cooperation.',
-        category: 'Expeditions',
-        featured: false,
-    },
-    {
-        date: 'Ongoing',
-        title: 'Partnership Expansion',
-        description: 'The program is expanding partnerships with other clubs and societies, local organizations, to support more students through the Award levels.',
-        category: 'Growth',
-        featured: false,
-    },
-]
+import { getNews } from '@/lib/content'
+import type { NewsArticle } from '@/lib/types'
 
 const categoryColors: Record<string, string> = {
     'Expeditions': 'bg-primary/10 text-primary',
@@ -57,6 +17,20 @@ const categoryColors: Record<string, string> = {
 }
 
 export default function NewsPage() {
+    const [newsItems, setNewsItems] = useState<NewsArticle[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        getNews().then(data => { setNewsItems(data); setLoading(false) })
+    }, [])
+
+    if (loading) return (
+        <>
+            <PageHero title="News & Updates" subtitle="Stay informed about our chapter's activities, expeditions, and achievements." badge="Latest Updates" badgeIcon="newspaper" />
+            <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" /></div>
+        </>
+    )
+
     return (
         <>
             <PageHero
@@ -77,23 +51,25 @@ export default function NewsPage() {
                     </ScrollReveal>
                     <div className="grid md:grid-cols-2 gap-6 mb-16">
                         {newsItems.filter(n => n.featured).map((item, i) => (
-                            <ScrollReveal key={i} delay={i * 100}>
-                                <div className="bg-primary/5 rounded-2xl p-8 border-2 border-primary/15 hover:border-primary/40 hover:shadow-xl transition-all duration-300 h-full group">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <Calendar className="w-4 h-4 text-teal-600" />
-                                        <span className="text-sm font-semibold text-teal-600">{item.date}</span>
-                                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${categoryColors[item.category] || 'bg-muted text-foreground'}`}>
-                                            {item.category}
-                                        </span>
+                            <ScrollReveal key={item.id} delay={i * 100}>
+                                <Link href={`/news/${item.slug}`} className="block h-full">
+                                    <div className="bg-primary/5 rounded-2xl p-8 border-2 border-primary/15 hover:border-primary/40 hover:shadow-xl transition-all duration-300 h-full group">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <Calendar className="w-4 h-4 text-teal-600" />
+                                            <span className="text-sm font-semibold text-teal-600">{item.date}</span>
+                                            <span className={`text-xs font-bold px-3 py-1 rounded-full ${categoryColors[item.category] || 'bg-muted text-foreground'}`}>
+                                                {item.category}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-2xl font-display font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                                            {item.title}
+                                        </h3>
+                                        <p className="text-muted-foreground leading-relaxed mb-4">{item.description}</p>
+                                        <div className="flex items-center text-primary font-semibold text-sm group-hover:gap-3 gap-2 transition-all">
+                                            Read more <ArrowRight className="w-4 h-4" />
+                                        </div>
                                     </div>
-                                    <h3 className="text-2xl font-display font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
-                                        {item.title}
-                                    </h3>
-                                    <p className="text-muted-foreground leading-relaxed mb-4">{item.description}</p>
-                                    <div className="flex items-center text-primary font-semibold text-sm group-hover:gap-3 gap-2 transition-all">
-                                        Read more <ArrowRight className="w-4 h-4" />
-                                    </div>
-                                </div>
+                                </Link>
                             </ScrollReveal>
                         ))}
                     </div>
@@ -104,25 +80,27 @@ export default function NewsPage() {
                     </ScrollReveal>
                     <div className="space-y-4">
                         {newsItems.filter(n => !n.featured).map((item, i) => (
-                            <ScrollReveal key={i} delay={i * 60}>
-                                <div className="group bg-muted/30 border-l-4 border-primary/20 hover:border-primary pl-6 pr-6 py-6 rounded-lg transition-all hover:shadow-md hover:bg-primary/5">
-                                    <div className="flex items-start justify-between mb-3">
-                                        <div className="flex items-center gap-3">
-                                            <Calendar className="w-4 h-4 text-teal-600 flex-shrink-0" />
-                                            <span className="text-sm font-semibold text-teal-600">{item.date}</span>
+                            <ScrollReveal key={item.id} delay={i * 60}>
+                                <Link href={`/news/${item.slug}`} className="block">
+                                    <div className="group bg-muted/30 border-l-4 border-primary/20 hover:border-primary pl-6 pr-6 py-6 rounded-lg transition-all hover:shadow-md hover:bg-primary/5">
+                                        <div className="flex items-start justify-between mb-3">
+                                            <div className="flex items-center gap-3">
+                                                <Calendar className="w-4 h-4 text-teal-600 flex-shrink-0" />
+                                                <span className="text-sm font-semibold text-teal-600">{item.date}</span>
+                                            </div>
+                                            <span className={`text-xs font-bold px-3 py-1 rounded-full ${categoryColors[item.category] || 'bg-muted text-foreground'}`}>
+                                                {item.category}
+                                            </span>
                                         </div>
-                                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${categoryColors[item.category] || 'bg-muted text-foreground'}`}>
-                                            {item.category}
-                                        </span>
+                                        <h3 className="text-xl font-display font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                                            {item.title}
+                                        </h3>
+                                        <p className="text-muted-foreground leading-relaxed mb-3">{item.description}</p>
+                                        <div className="flex items-center text-primary font-semibold text-sm group-hover:gap-3 gap-2 transition-all">
+                                            Read more <ArrowRight className="w-4 h-4" />
+                                        </div>
                                     </div>
-                                    <h3 className="text-xl font-display font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                                        {item.title}
-                                    </h3>
-                                    <p className="text-muted-foreground leading-relaxed mb-3">{item.description}</p>
-                                    <div className="flex items-center text-primary font-semibold text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                                        Read more <ArrowRight className="w-4 h-4 ml-2" />
-                                    </div>
-                                </div>
+                                </Link>
                             </ScrollReveal>
                         ))}
                     </div>

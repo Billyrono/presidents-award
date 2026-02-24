@@ -1,32 +1,36 @@
 import { PageHero } from '@/components/page-hero'
 import { ScrollReveal } from '@/components/scroll-reveal'
-import { Heart, Zap, Dumbbell, Compass, Home, ArrowRight, CheckCircle } from 'lucide-react'
+import { Heart, Zap, Dumbbell, Compass, Home, ArrowRight, CheckCircle, Clock } from 'lucide-react'
 import Link from 'next/link'
 
 const pillars = [
     {
+        id: 'voluntary-service',
         icon: Heart,
         title: 'Voluntary Service',
         description: 'Awardees commit their time and skills to serve communities within and beyond the university. Activities include charity outreach, mentorship programs, environmental conservation, and supporting local initiatives.',
         details: ['Charity outreach programs', 'Mentorship for younger students', 'Environmental conservation', 'Supporting local community initiatives'],
     },
     {
+        id: 'skills-development',
         icon: Zap,
         title: 'Skills Development',
         description: 'Members pursue personal talents and professional skills that build capabilities to enhance personal and career readiness.',
         details: ['Public speaking & leadership', 'First aid training', 'Digital literacy & entrepreneurship', 'Language learning'],
     },
     {
+        id: 'physical-recreation',
         icon: Dumbbell,
         title: 'Physical Recreation',
         description: 'Encouraging healthy living, awardees take part in regular sporting activities that improve both mental and physical wellness.',
         details: ['Running & cycling', 'Hiking expeditions', 'University sports clubs', 'Fitness & wellness activities'],
     },
     {
+        id: 'adventurous-journey',
         icon: Compass,
         title: 'Adventurous Journey',
         description: 'Participants undertake a challenging journey in a small team in an unfamiliar environment, requiring determination, physical effort, perseverance and cooperation to complete.',
-        details: ['Two journeys in Aberdares', 'One journey in Ngong Hills', 'Team navigation & survival', 'Purpose-driven expeditions'],
+        details: ['Three journeys in Aberdares (AJ I, II & III)', 'One journey in Ngong Hills', 'Team navigation & survival', 'Purpose-driven expeditions'],
     },
 ]
 
@@ -65,7 +69,7 @@ export default function ProgramsPage() {
         <>
             <PageHero
                 title="Our Programs"
-                subtitle="Four core activities designed to build discipline, teamwork, resilience, and a spirit of volunteerism."
+                subtitle="Five core sections designed to build discipline, teamwork, resilience, and a spirit of volunteerism."
                 badge="Core Activities"
                 badgeIcon="layers"
             />
@@ -88,7 +92,7 @@ export default function ProgramsPage() {
                             const Icon = pillar.icon
                             return (
                                 <ScrollReveal key={i} delay={i * 80}>
-                                    <div className="bg-teal-600/5 rounded-2xl p-8 md:p-10 border border-teal-600/15 hover:shadow-lg transition-all duration-300">
+                                    <div id={pillar.id} className="bg-teal-600/5 rounded-2xl p-8 md:p-10 border border-teal-600/15 hover:shadow-lg transition-all duration-300 scroll-mt-24">
                                         <div className="flex flex-col md:flex-row gap-6 md:gap-10">
                                             <div className="flex-shrink-0">
                                                 <div className="w-16 h-16 rounded-xl bg-teal-600 p-3 text-white">
@@ -117,7 +121,7 @@ export default function ProgramsPage() {
             </section>
 
             {/* Gold Residential */}
-            <section className="py-20 px-4 md:px-8 bg-muted/30">
+            <section id="gold-residential" className="py-20 px-4 md:px-8 bg-muted/30 scroll-mt-24">
                 <div className="max-w-5xl mx-auto">
                     <ScrollReveal>
                         <div className="bg-card rounded-2xl p-8 md:p-12 border border-border">
@@ -132,7 +136,7 @@ export default function ProgramsPage() {
                                     <p className="text-foreground/70 leading-relaxed mb-5">
                                         At the Gold level, participants complete a Gold Residential Project, working in unfamiliar environments which foster independence, cultural awareness, and adaptability. The chapter has delivered two impactful residential projects:
                                     </p>
-                                    <ul className="space-y-3">
+                                    <ul className="space-y-3 mb-6">
                                         <li className="flex items-start gap-3 text-foreground/70">
                                             <CheckCircle className="w-5 h-5 text-[#C9A84C] flex-shrink-0 mt-0.5" />
                                             <span>A <strong>water project at Kianyaga Children&apos;s Home</strong>, enhancing access to basic needs</span>
@@ -142,6 +146,17 @@ export default function ProgramsPage() {
                                             <span>Thematic <strong>painting of two classrooms at Raimu Special Unit</strong>, creating a friendly and inspiring learning environment for children with special needs</span>
                                         </li>
                                     </ul>
+
+                                    {/* Coming Soon RP */}
+                                    <div className="bg-[#C9A84C]/10 rounded-xl p-5 border border-[#C9A84C]/20">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <Clock className="w-5 h-5 text-[#C9A84C]" />
+                                            <h4 className="font-display font-bold text-foreground">New Residential Project — Coming Soon</h4>
+                                        </div>
+                                        <p className="text-foreground/60 text-sm leading-relaxed">
+                                            A new Gold Residential Project is being planned. More information will be shared soon. Stay tuned!
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

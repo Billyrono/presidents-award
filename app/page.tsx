@@ -5,16 +5,16 @@ import { Zap, Heart, Compass, Dumbbell, Home, ArrowRight, Award, Users, Mountain
 import { Button } from '@/components/ui/button'
 
 const pillars = [
-  { icon: Heart, title: 'Voluntary Service', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600' },
-  { icon: Zap, title: 'Skills Development', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600' },
-  { icon: Dumbbell, title: 'Physical Recreation', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600' },
-  { icon: Compass, title: 'Adventurous Journey', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600' },
-  { icon: Home, title: 'Gold Residential', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600' },
+  { icon: Heart, title: 'Voluntary Service', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600', slug: 'voluntary-service' },
+  { icon: Zap, title: 'Skills Development', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600', slug: 'skills-development' },
+  { icon: Dumbbell, title: 'Physical Recreation', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600', slug: 'physical-recreation' },
+  { icon: Compass, title: 'Adventurous Journey', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600', slug: 'adventurous-journey' },
+  { icon: Home, title: 'Gold Residential', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600', slug: 'gold-residential' },
 ]
 
 const stats = [
   { icon: Award, number: '20+', label: 'Gold Awards at State House' },
-  { icon: Tent, number: '3', label: 'Adventurous Journeys' },
+  { icon: Tent, number: '4', label: 'Adventurous Journeys' },
   { icon: Mountain, number: '2', label: 'Residential Projects' },
   { icon: Users, number: 'Growing', label: 'Annual Enrollment' },
 ]
@@ -71,12 +71,14 @@ export default function HomePage() {
               const Icon = pillar.icon
               return (
                 <ScrollReveal key={i} delay={i * 80}>
-                  <div className={`${pillar.bg} rounded-2xl p-6 text-center group hover:shadow-lg hover:scale-105 transition-all duration-300 border border-transparent hover:border-foreground/10`}>
-                    <div className={`w-14 h-14 rounded-xl ${pillar.iconBg} p-3 mb-4 mx-auto text-white transition-transform group-hover:-rotate-6`}>
-                      <Icon className="w-full h-full" />
+                  <Link href={`/programs#${pillar.slug}`}>
+                    <div className={`${pillar.bg} rounded-2xl p-6 text-center group hover:shadow-lg hover:scale-105 transition-all duration-300 border border-transparent hover:border-foreground/10 cursor-pointer`}>
+                      <div className={`w-14 h-14 rounded-xl ${pillar.iconBg} p-3 mb-4 mx-auto text-white transition-transform group-hover:-rotate-6`}>
+                        <Icon className="w-full h-full" />
+                      </div>
+                      <h3 className="font-display font-bold text-foreground text-sm md:text-base">{pillar.title}</h3>
                     </div>
-                    <h3 className="font-display font-bold text-foreground text-sm md:text-base">{pillar.title}</h3>
-                  </div>
+                  </Link>
                 </ScrollReveal>
               )
             })}
