@@ -17,8 +17,10 @@ export default function GalleryPage() {
 
     useEffect(() => {
         getGallery().then(data => {
-            setGalleryImages(data)
-            const cats = ['All', ...new Set(data.map(img => img.category).filter(Boolean))]
+            // Only show entries that have a real image URL on public gallery
+            const withImages = data.filter(img => img.image_url && img.image_url.trim() !== '')
+            setGalleryImages(withImages)
+            const cats = ['All', ...new Set(withImages.map(img => img.category).filter(Boolean))]
             setCategories(cats)
             setLoading(false)
         })
@@ -143,7 +145,7 @@ export default function GalleryPage() {
 
                     {!loading && filtered.length === 0 && (
                         <div className="text-center py-20">
-                            <p className="text-muted-foreground text-lg">No images in this category yet.</p>
+                            <p className="text-muted-foreground text-lg">No images in this category yet. Check back soon!</p>
                         </div>
                     )}
                 </div>

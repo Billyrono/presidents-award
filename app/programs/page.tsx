@@ -1,7 +1,13 @@
+import type { Metadata } from 'next'
 import { PageHero } from '@/components/page-hero'
 import { ScrollReveal } from '@/components/scroll-reveal'
 import { Heart, Zap, Dumbbell, Compass, Home, ArrowRight, CheckCircle, Clock } from 'lucide-react'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+    title: "Programs — President's Award Kirinyaga University",
+    description: "Explore Bronze, Silver, and Gold award levels. Discover our four pillars: Voluntary Service, Physical Recreation, Skills Development, and Adventurous Journey.",
+}
 
 const pillars = [
     {

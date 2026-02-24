@@ -21,7 +21,7 @@ export function CustomFooter() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-3 mb-3">
+            <Link href="/admin" className="flex items-center gap-3" title="">
               <Image
                 src="/Logo/PA Logo.svg"
                 alt="President's Award Logo"
@@ -33,7 +33,7 @@ export function CustomFooter() {
                 <h3 className="text-xl font-display font-bold">President&apos;s Award</h3>
                 <p className="text-white/70 text-xs font-semibold">Kirinyaga University Chapter</p>
               </div>
-            </div>
+            </Link>
             <p className="text-white/60 text-sm mt-3 leading-relaxed">
               Empowering youth through challenge, service, and personal growth. Part of the Duke of Edinburgh&apos;s International Award.
             </p>
@@ -48,6 +48,7 @@ export function CustomFooter() {
               <li><Link href="/achievements" className="hover:text-white transition-colors">Achievements</Link></li>
               <li><Link href="/gallery" className="hover:text-white transition-colors">Gallery</Link></li>
               <li><Link href="/news" className="hover:text-white transition-colors">News & Updates</Link></li>
+              <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
             </ul>
           </div>
 

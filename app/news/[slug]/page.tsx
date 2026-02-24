@@ -3,6 +3,7 @@
 import { useEffect, useState, use } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import ReactMarkdown from 'react-markdown'
 import { ScrollReveal } from '@/components/scroll-reveal'
 import { Calendar, ArrowLeft, ArrowRight, User, Tag, Clock, Share2 } from 'lucide-react'
 import { getNewsBySlug, getNewsSlugs, toDirectImageUrl } from '@/lib/content'
@@ -52,7 +53,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
     const currentIndex = allSlugs.indexOf(slug)
     const prevSlug = currentIndex > 0 ? allSlugs[currentIndex - 1] : null
     const nextSlug = currentIndex < allSlugs.length - 1 ? allSlugs[currentIndex + 1] : null
-    const paragraphs = (article.content || '').split('\n\n').filter(Boolean)
+    // Content is rendered via ReactMarkdown below
     const featuredUrl = toDirectImageUrl(article.featured_image)
     const readTime = Math.max(1, Math.ceil((article.content || '').split(' ').length / 200))
 
@@ -127,34 +128,56 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                 <div className="max-w-3xl mx-auto">
                     {/* Article body — blog typography */}
                     <article className="prose-custom">
-                        {paragraphs.map((paragraph, i) => {
-                            // Support basic formatting: lines starting with ## become h2, ### become h3
-                            if (paragraph.startsWith('### ')) {
-                                return (
-                                    <ScrollReveal key={i} delay={i * 40}>
-                                        <h3 className="text-xl font-display font-bold text-foreground mt-10 mb-4">
-                                            {paragraph.replace('### ', '')}
-                                        </h3>
+                        <ReactMarkdown
+                            components={{
+                                h1: ({ children }) => (
+                                    <ScrollReveal>
+                                        <h1 className="text-3xl font-display font-bold text-foreground mt-12 mb-6">{children}</h1>
                                     </ScrollReveal>
-                                )
-                            }
-                            if (paragraph.startsWith('## ')) {
-                                return (
-                                    <ScrollReveal key={i} delay={i * 40}>
-                                        <h2 className="text-2xl font-display font-bold text-foreground mt-12 mb-4">
-                                            {paragraph.replace('## ', '')}
-                                        </h2>
+                                ),
+                                h2: ({ children }) => (
+                                    <ScrollReveal>
+                                        <h2 className="text-2xl font-display font-bold text-foreground mt-12 mb-4">{children}</h2>
                                     </ScrollReveal>
-                                )
-                            }
-                            return (
-                                <ScrollReveal key={i} delay={i * 40}>
-                                    <p className="text-foreground/80 leading-[1.9] text-[1.125rem] mb-6 font-serif">
-                                        {paragraph}
-                                    </p>
-                                </ScrollReveal>
-                            )
-                        })}
+                                ),
+                                h3: ({ children }) => (
+                                    <ScrollReveal>
+                                        <h3 className="text-xl font-display font-bold text-foreground mt-10 mb-4">{children}</h3>
+                                    </ScrollReveal>
+                                ),
+                                p: ({ children }) => (
+                                    <ScrollReveal>
+                                        <p className="text-foreground/80 leading-[1.9] text-[1.125rem] mb-6 font-serif">{children}</p>
+                                    </ScrollReveal>
+                                ),
+                                strong: ({ children }) => (
+                                    <strong className="font-bold text-foreground">{children}</strong>
+                                ),
+                                em: ({ children }) => (
+                                    <em className="italic">{children}</em>
+                                ),
+                                ul: ({ children }) => (
+                                    <ul className="list-disc pl-6 mb-6 space-y-2 text-foreground/80 text-[1.125rem] leading-[1.9] font-serif">{children}</ul>
+                                ),
+                                ol: ({ children }) => (
+                                    <ol className="list-decimal pl-6 mb-6 space-y-2 text-foreground/80 text-[1.125rem] leading-[1.9] font-serif">{children}</ol>
+                                ),
+                                li: ({ children }) => (
+                                    <li className="pl-1">{children}</li>
+                                ),
+                                blockquote: ({ children }) => (
+                                    <blockquote className="border-l-4 border-primary/40 pl-6 py-2 my-6 bg-primary/5 rounded-r-xl italic text-foreground/70">{children}</blockquote>
+                                ),
+                                a: ({ href, children }) => (
+                                    <a href={href} className="text-primary font-semibold hover:underline" target="_blank" rel="noopener noreferrer">{children}</a>
+                                ),
+                                hr: () => (
+                                    <hr className="my-10 border-border" />
+                                ),
+                            }}
+                        >
+                            {article.content || ''}
+                        </ReactMarkdown>
                     </article>
 
                     {/* Share + Tags */}

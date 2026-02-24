@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import { PageHero } from '@/components/page-hero'
 import { ScrollReveal } from '@/components/scroll-reveal'
 import { Target, Eye, Sparkles, Shield, Users, Heart, GraduationCap } from 'lucide-react'
+
+export const metadata: Metadata = {
+    title: "About — President's Award Kirinyaga University",
+    description: "Learn about the President's Award chapter at Kirinyaga University. Our mission, values, journey, and how to participate in the Duke of Edinburgh's International Award program.",
+}
 
 const values = [
     { icon: Shield, title: 'Discipline', description: 'Building self-discipline through structured challenges and consistent commitment to personal growth.' },

@@ -6,7 +6,8 @@ import { ScrollReveal } from '@/components/scroll-reveal'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Mail, Phone, MapPin, Instagram, Linkedin, Facebook, ChevronDown } from 'lucide-react'
+import { Mail, Phone, MapPin, Instagram, Linkedin, Facebook, ChevronDown, CheckCircle } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
 
 const faqs = [
     {
@@ -43,16 +44,39 @@ export default function JoinPage() {
     })
 
     const [openFaq, setOpenFaq] = useState<number | null>(null)
+    const [submitting, setSubmitting] = useState(false)
+    const [submitted, setSubmitted] = useState(false)
+    const [error, setError] = useState('')
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target
         setFormData(prev => ({ ...prev, [name]: value }))
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log('Form submitted:', formData)
-        alert('Thank you for your interest! We will contact you soon.')
+        setSubmitting(true)
+        setError('')
+
+        const { error: dbError } = await supabase.from('applications').insert({
+            full_name: formData.fullName,
+            email: formData.email,
+            phone: formData.phone,
+            faculty: formData.faculty,
+            year_of_study: formData.year,
+            interests: formData.interests,
+            message: formData.message,
+        })
+
+        setSubmitting(false)
+
+        if (dbError) {
+            setError('Something went wrong. Please try again or contact us directly.')
+            console.error('Application submit error:', dbError)
+            return
+        }
+
+        setSubmitted(true)
         setFormData({ fullName: '', email: '', phone: '', faculty: '', year: '', interests: '', message: '' })
     }
 
@@ -73,99 +97,69 @@ export default function JoinPage() {
                         <ScrollReveal>
                             <div className="bg-muted/20 rounded-2xl p-8 border border-border shadow-sm">
                                 <h2 className="text-2xl font-display font-bold text-foreground mb-6">Application Form</h2>
-                                <form onSubmit={handleSubmit} className="space-y-4">
-                                    <div>
-                                        <label className="text-sm font-semibold text-foreground block mb-2">Full Name</label>
-                                        <Input
-                                            type="text"
-                                            name="fullName"
-                                            placeholder="Your full name"
-                                            value={formData.fullName}
-                                            onChange={handleChange}
-                                            required
-                                            className="border-border focus:border-primary"
-                                        />
+
+                                {submitted ? (
+                                    <div className="text-center py-8">
+                                        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                                            <CheckCircle className="w-8 h-8 text-green-600" />
+                                        </div>
+                                        <h3 className="text-xl font-display font-bold text-foreground mb-2">Application Received!</h3>
+                                        <p className="text-muted-foreground mb-6">Thank you for your interest in the President&apos;s Award. We&apos;ll contact you soon.</p>
+                                        <button
+                                            onClick={() => setSubmitted(false)}
+                                            className="text-primary font-semibold text-sm hover:underline"
+                                        >
+                                            Submit another application
+                                        </button>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
+                                ) : (
+                                    <form onSubmit={handleSubmit} className="space-y-4">
+                                        {error && (
+                                            <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
+                                                {error}
+                                            </div>
+                                        )}
                                         <div>
-                                            <label className="text-sm font-semibold text-foreground block mb-2">Email</label>
-                                            <Input
-                                                type="email"
-                                                name="email"
-                                                placeholder="your@email.com"
-                                                value={formData.email}
-                                                onChange={handleChange}
-                                                required
-                                                className="border-border focus:border-primary"
-                                            />
+                                            <label className="text-sm font-semibold text-foreground block mb-2">Full Name</label>
+                                            <Input type="text" name="fullName" placeholder="Your full name" value={formData.fullName} onChange={handleChange} required className="border-border focus:border-primary" />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-sm font-semibold text-foreground block mb-2">Email</label>
+                                                <Input type="email" name="email" placeholder="your@email.com" value={formData.email} onChange={handleChange} required className="border-border focus:border-primary" />
+                                            </div>
+                                            <div>
+                                                <label className="text-sm font-semibold text-foreground block mb-2">Phone</label>
+                                                <Input type="tel" name="phone" placeholder="+254..." value={formData.phone} onChange={handleChange} required className="border-border focus:border-primary" />
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-sm font-semibold text-foreground block mb-2">Faculty</label>
+                                                <Input type="text" name="faculty" placeholder="Your faculty" value={formData.faculty} onChange={handleChange} required className="border-border focus:border-primary" />
+                                            </div>
+                                            <div>
+                                                <label className="text-sm font-semibold text-foreground block mb-2">Year of Study</label>
+                                                <Input type="text" name="year" placeholder="e.g., Year 2" value={formData.year} onChange={handleChange} required className="border-border focus:border-primary" />
+                                            </div>
                                         </div>
                                         <div>
-                                            <label className="text-sm font-semibold text-foreground block mb-2">Phone</label>
-                                            <Input
-                                                type="tel"
-                                                name="phone"
-                                                placeholder="+254..."
-                                                value={formData.phone}
-                                                onChange={handleChange}
-                                                required
-                                                className="border-border focus:border-primary"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="text-sm font-semibold text-foreground block mb-2">Faculty</label>
-                                            <Input
-                                                type="text"
-                                                name="faculty"
-                                                placeholder="Your faculty"
-                                                value={formData.faculty}
-                                                onChange={handleChange}
-                                                required
-                                                className="border-border focus:border-primary"
-                                            />
+                                            <label className="text-sm font-semibold text-foreground block mb-2">What interests you most?</label>
+                                            <Input type="text" name="interests" placeholder="e.g., Adventure, Community Service..." value={formData.interests} onChange={handleChange} className="border-border focus:border-primary" />
                                         </div>
                                         <div>
-                                            <label className="text-sm font-semibold text-foreground block mb-2">Year of Study</label>
-                                            <Input
-                                                type="text"
-                                                name="year"
-                                                placeholder="e.g., Year 2"
-                                                value={formData.year}
-                                                onChange={handleChange}
-                                                required
-                                                className="border-border focus:border-primary"
-                                            />
+                                            <label className="text-sm font-semibold text-foreground block mb-2">Tell us about yourself</label>
+                                            <Textarea name="message" placeholder="Why do you want to join the President's Award program?" value={formData.message} onChange={handleChange} className="border-border focus:border-primary min-h-32 resize-none" />
                                         </div>
-                                    </div>
-                                    <div>
-                                        <label className="text-sm font-semibold text-foreground block mb-2">What interests you most?</label>
-                                        <Input
-                                            type="text"
-                                            name="interests"
-                                            placeholder="e.g., Adventure, Community Service..."
-                                            value={formData.interests}
-                                            onChange={handleChange}
-                                            className="border-border focus:border-primary"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="text-sm font-semibold text-foreground block mb-2">Tell us about yourself</label>
-                                        <Textarea
-                                            name="message"
-                                            placeholder="Why do you want to join the President's Award program?"
-                                            value={formData.message}
-                                            onChange={handleChange}
-                                            className="border-border focus:border-primary min-h-32 resize-none"
-                                        />
-                                    </div>
-                                    <Button
-                                        type="submit"
-                                        className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-lg transition-all"
-                                    >
-                                        Submit Application
-                                    </Button>
-                                </form>
+                                        <Button
+                                            type="submit"
+                                            disabled={submitting}
+                                            className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-lg transition-all disabled:opacity-60"
+                                        >
+                                            {submitting ? 'Submitting...' : 'Submit Application'}
+                                        </Button>
+                                    </form>
+                                )}
                             </div>
                         </ScrollReveal>
 

@@ -17,6 +17,7 @@ import {
     X,
     ChevronRight,
     Home,
+    Users,
 } from 'lucide-react'
 
 const navItems = [
@@ -24,6 +25,7 @@ const navItems = [
     { label: 'News', href: '/admin/news', icon: Newspaper },
     { label: 'Expeditions', href: '/admin/expeditions', icon: Mountain },
     { label: 'Gallery', href: '/admin/gallery', icon: ImageIcon },
+    { label: 'Applications', href: '/admin/applications', icon: Users },
     { label: 'Settings', href: '/admin/settings', icon: Settings },
 ]
 
@@ -89,6 +91,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     return (
         <div className="h-screen flex overflow-hidden bg-muted/20">
+            {/* Mobile device gate — blocks phones */}
+            <div className="fixed inset-0 z-[100] bg-background flex items-center justify-center p-8 md:hidden">
+                <div className="text-center max-w-sm">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                        <LayoutDashboard className="w-8 h-8 text-primary" />
+                    </div>
+                    <h2 className="text-xl font-display font-bold text-foreground mb-3">Desktop Required</h2>
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+                        The admin panel is optimized for larger screens. Please use a <strong>tablet</strong>, <strong>laptop</strong>, or <strong>desktop</strong> to access the dashboard.
+                    </p>
+                    <Link href="/" className="inline-flex items-center gap-2 text-primary font-semibold text-sm hover:underline">
+                        <Home className="w-4 h-4" /> Back to Website
+                    </Link>
+                </div>
+            </div>
             {/* Sidebar — fixed height, no scroll */}
             <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-card border-r border-border flex flex-col transform transition-transform duration-200 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-auto`}>
                 {/* Admin Header */}
@@ -113,8 +130,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 href={item.href}
                                 onClick={() => setSidebarOpen(false)}
                                 className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive
-                                        ? 'bg-primary/10 text-primary font-semibold'
-                                        : 'text-foreground/60 hover:text-foreground hover:bg-muted/50'
+                                    ? 'bg-primary/10 text-primary font-semibold'
+                                    : 'text-foreground/60 hover:text-foreground hover:bg-muted/50'
                                     }`}
                             >
                                 <Icon className="w-4 h-4" />

@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import type { NewsArticle } from '@/lib/types'
 import { Plus, Pencil, Trash2, Star, Eye, EyeOff, X } from 'lucide-react'
 import { CustomSelect } from '@/components/custom-select'
+import { MarkdownEditor } from '@/components/markdown-editor'
 
 export default function AdminNewsPage() {
     const [articles, setArticles] = useState<NewsArticle[]>([])
@@ -134,8 +135,14 @@ export default function AdminNewsPage() {
                                 <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={2} className="w-full bg-muted/30 border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none" placeholder="Short description shown on the news listing" />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-1">Full Content</label>
-                                <textarea value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} rows={6} className="w-full bg-muted/30 border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y" placeholder="Full article body (separate paragraphs with blank lines)" />
+                                <label className="block text-sm font-medium mb-1">Full Content (Markdown)</label>
+                                <MarkdownEditor
+                                    value={form.content}
+                                    onChange={(v) => setForm({ ...form, content: v })}
+                                    placeholder="Write your article using the toolbar above. Use **bold**, ## headings, > quotes, and more..."
+                                    rows={8}
+                                />
+                                <p className="text-xs text-muted-foreground mt-1.5">Use the toolbar buttons or type markdown syntax directly. Click Preview to see how it will look.</p>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Featured Image URL</label>
