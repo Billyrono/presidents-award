@@ -18,9 +18,9 @@ const values = [
 ]
 
 const timeline = [
-    { year: 'Established', title: 'Chapter Founded', description: 'The President\'s Award chapter was established at Kirinyaga University, bringing the Duke of Edinburgh\'s International Award program to the university community.' },
+    { year: 'Established', title: 'Chapter Founded', description: 'The President\'s Award – Kenya at Kirinyaga University was established to bring the Duke of Edinburgh\'s International Award to the university community, providing students with opportunities for personal development, leadership, and community service.' },
     { year: 'Growing', title: 'Increasing Enrollment', description: 'Growing participation of students from diverse faculties each academic year, expanding the program\'s reach across the university.' },
-    { year: 'Expeditions', title: 'Three Adventurous Journeys', description: 'Successfully completed three adventurous journeys — two in the Aberdares and one in Ngong Hills — testing endurance and building teamwork.' },
+    { year: 'Expeditions', title: 'Four Adventurous Journeys', description: 'Successfully completed four adventurous journeys — three in the Aberdares and one in Ngong Hills — testing endurance and building teamwork.' },
     { year: 'Impact', title: '20+ Gold Award Recipients', description: '20 members of the Kirinyaga University chapter have been awarded their Gold Award at the Kenyan State House by the President of Kenya.' },
 ]
 

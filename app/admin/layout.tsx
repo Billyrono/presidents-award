@@ -90,7 +90,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const breadcrumbs = getBreadcrumbs(pathname)
 
     return (
-        <div className="h-screen flex overflow-hidden bg-muted/20">
+        <div className="admin-panel h-screen flex overflow-hidden bg-muted/20">
             {/* Mobile device gate — blocks phones */}
             <div className="fixed inset-0 z-[100] bg-background flex items-center justify-center p-8 md:hidden">
                 <div className="text-center max-w-sm">

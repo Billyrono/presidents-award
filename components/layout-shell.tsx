@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import { Navbar } from '@/components/navbar'
 import { CustomFooter } from '@/components/custom-footer'
 import { CookieConsent } from '@/components/cookie-consent'
+import { ScrollProgress } from '@/components/scroll-progress'
 
 export function LayoutShell({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
@@ -19,6 +20,7 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
             <main className="pt-16 md:pt-20">{children}</main>
             <CustomFooter />
             <CookieConsent />
+            <ScrollProgress />
         </>
     )
 }

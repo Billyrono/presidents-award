@@ -128,8 +128,37 @@ export default function AdminExpeditionsPage() {
                                     <input value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} className="w-full bg-muted/30 border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium mb-1">Date</label>
-                                    <input value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="w-full bg-muted/30 border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" placeholder="Feb 19-22, 2026" />
+                                    <label className="block text-sm font-medium mb-1">Date Range</label>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label className="block text-xs text-muted-foreground mb-1">Start</label>
+                                            <input
+                                                type="date"
+                                                value={form.date.split(' - ')[0] || ''}
+                                                onChange={e => {
+                                                    const end = form.date.split(' - ')[1] || ''
+                                                    const start = e.target.value
+                                                    const formatted = end ? `${start} - ${end}` : start
+                                                    setForm({ ...form, date: formatted })
+                                                }}
+                                                className="w-full bg-muted/30 border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs text-muted-foreground mb-1">End</label>
+                                            <input
+                                                type="date"
+                                                value={form.date.split(' - ')[1] || ''}
+                                                onChange={e => {
+                                                    const start = form.date.split(' - ')[0] || ''
+                                                    const end = e.target.value
+                                                    const formatted = start ? `${start} - ${end}` : end
+                                                    setForm({ ...form, date: formatted })
+                                                }}
+                                                className="w-full bg-muted/30 border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div>

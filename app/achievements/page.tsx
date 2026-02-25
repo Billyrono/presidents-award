@@ -9,19 +9,19 @@ import type { Expedition, Project } from '@/lib/types'
 
 const testimonials = [
     {
-        quote: 'The President\'s Award gave me the confidence to lead. Completing the adventurous journey in the Aberdares showed me that no challenge is too great when you have the right team.',
-        name: 'Gold Awardee',
-        role: 'Kirinyaga University Chapter',
+        quote: 'The President\'s Award has been a great experience from start to finish. The expeditions through the Aberdares, the community service, the friendships — it all came together in a way I never expected. Standing at State House to receive my Gold Award was the highlight of my university life.',
+        name: 'Denis Kamotho',
+        role: 'Gold Awardee, Kirinyaga University',
     },
     {
-        quote: 'Through community service at Kianyaga Children\'s Home, I discovered my passion for helping others. The skills I gained are ones I use every single day.',
-        name: 'Silver Participant',
-        role: 'Kirinyaga University Chapter',
+        quote: 'It wasn\'t easy — there were moments during the expeditions when I wanted to give up the hike. But completing each section taught me that I\'m stronger than I think. The President\'s Award pushed me beyond my comfort zone and I came out more confident and determined.',
+        name: 'Beryl Murimi',
+        role: 'Gold Awardee, Kirinyaga University',
     },
     {
-        quote: 'This program changed my life. From a shy student to a confident leader — I\'m proud to have received my Award at State House.',
-        name: 'Gold Awardee',
-        role: 'Kirinyaga University Chapter',
+        quote: 'The journey to Gold was quite challenging. The adventurous journeys tested my limits, and balancing the program with academics was tough. But every challenge built me stronger. Looking back now, I wouldn\'t trade a single moment — it shaped who I am today.',
+        name: 'Margaret Karanja',
+        role: 'Gold Awardee, Kirinyaga University',
     },
 ]
 

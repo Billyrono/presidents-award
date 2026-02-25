@@ -13,32 +13,18 @@ import pillow_heif
 # Register HEIC opener
 pillow_heif.register_heif_opener()
 
-HERO_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'Hero', 'Home')
+HERO_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'Gallery', 'Service', 'Raimu')
 TARGET_WIDTH = 3840
 TARGET_HEIGHT = 2160
 QUALITY = 92
 
-def center_crop_resize(img, target_w, target_h):
-    """Resize maintaining aspect ratio then center-crop to exact dimensions."""
+def resize_fit(img, max_w, max_h):
+    """Resize maintaining aspect ratio to fit within max dimensions (no cropping)."""
     w, h = img.size
-    target_ratio = target_w / target_h
-    img_ratio = w / h
-
-    if img_ratio > target_ratio:
-        # Image is wider, resize by height then crop width
-        new_h = target_h
-        new_w = int(img_ratio * target_h)
-    else:
-        # Image is taller, resize by width then crop height
-        new_w = target_w
-        new_h = int(target_w / img_ratio)
-
+    ratio = min(max_w / w, max_h / h)
+    new_w = int(w * ratio)
+    new_h = int(h * ratio)
     img = img.resize((new_w, new_h), Image.LANCZOS)
-
-    # Center crop
-    left = (new_w - target_w) // 2
-    top = (new_h - target_h) // 2
-    img = img.crop((left, top, left + target_w, top + target_h))
     return img
 
 
@@ -67,7 +53,7 @@ def process_image(filepath, output_path=None):
     print(f"    Original size: {img.size[0]}x{img.size[1]}")
 
     # Resize to 4K
-    img = center_crop_resize(img, TARGET_WIDTH, TARGET_HEIGHT)
+    img = resize_fit(img, TARGET_WIDTH, TARGET_HEIGHT)
     print(f"    Resized to: {img.size[0]}x{img.size[1]}")
 
     # Enhance
@@ -91,11 +77,10 @@ def main():
     print("=" * 50)
 
     files = [
-        'hero-bg.jpg',
-        '20240928_112021.jpg',
-        'DSC_2956.JPG',
-        'IMG_2386.jpg',
-        'IMG_4896.HEIC',
+        'IMG_7750.jpg',
+        'IMG_7786.JPG',
+        'IMG_7810.HEIC',
+        'IMG_7796.HEIC',
     ]
 
     for f in files:

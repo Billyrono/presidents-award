@@ -6,7 +6,7 @@ import { ScrollReveal } from '@/components/scroll-reveal'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Mail, Phone, MapPin, Instagram, Linkedin, Facebook, ChevronDown, CheckCircle } from 'lucide-react'
+import { Mail, Phone, MapPin, Instagram, Facebook, ChevronDown, CheckCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 const faqs = [
@@ -16,11 +16,11 @@ const faqs = [
     },
     {
         question: 'How much does it cost to participate?',
-        answer: 'The registration fee is affordable and covers your program materials, assessment, and certification. Contact us for current fee details. Scholarships may be available.',
+        answer: 'The registration fee is affordable and covers your program materials, assessment, and certification. Fees are paid periodically throughout the program, not all at once. Contact us for current fee details.',
     },
     {
         question: 'How long does each award level take?',
-        answer: 'Bronze requires a minimum of 6 months, Silver requires 12 months, and Gold requires 18 months. You can take longer if needed — the program is flexible.',
+        answer: 'Bronze requires a minimum of 6 months, Silver requires 12 months, and Gold requires 18 months. You can take longer if needed \u2014 the program is flexible. You can also enter the Gold level directly without completing Bronze or Silver, though the minimum duration remains 18 months.',
     },
     {
         question: 'Do I need prior experience in adventure activities?',
@@ -28,7 +28,7 @@ const faqs = [
     },
     {
         question: 'What happens after I complete the program?',
-        answer: 'Bronze and Silver recipients receive certificates. Gold Award recipients are honored at State House by the President of Kenya — 20+ members from our chapter have achieved this. All levels are internationally recognized.',
+        answer: 'At each level, you receive an internationally recognized certificate. Gold Award recipients are honored at a special ceremony at State House, Nairobi, where the President of Kenya personally presents the awards — 20+ members from our chapter have achieved this. After completing the Gold level, you can become a volunteer with the President\'s Award or join the Award Holders Association – Kenya (AHA-K), a network of award holders who support current participants. Through the Duke of Edinburgh\'s International Award, there are also opportunities to travel abroad for international forums, exchanges, and the Global Award Alumni Network (GAAN).',
     },
 ]
 
@@ -46,6 +46,7 @@ export default function JoinPage() {
     const [openFaq, setOpenFaq] = useState<number | null>(null)
     const [submitting, setSubmitting] = useState(false)
     const [submitted, setSubmitted] = useState(false)
+    const [submittedName, setSubmittedName] = useState('')
     const [error, setError] = useState('')
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -76,6 +77,7 @@ export default function JoinPage() {
             return
         }
 
+        setSubmittedName(formData.fullName)
         setSubmitted(true)
         setFormData({ fullName: '', email: '', phone: '', faculty: '', year: '', interests: '', message: '' })
     }
@@ -100,11 +102,16 @@ export default function JoinPage() {
 
                                 {submitted ? (
                                     <div className="text-center py-8">
-                                        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-                                            <CheckCircle className="w-8 h-8 text-green-600" />
+                                        <div className="w-16 h-16 rounded-full bg-teal-100 flex items-center justify-center mx-auto mb-4">
+                                            <CheckCircle className="w-8 h-8 text-teal-600" />
                                         </div>
                                         <h3 className="text-xl font-display font-bold text-foreground mb-2">Application Received!</h3>
-                                        <p className="text-muted-foreground mb-6">Thank you for your interest in the President&apos;s Award. We&apos;ll contact you soon.</p>
+                                        <p className="text-muted-foreground mb-4">
+                                            Thank you for your interest in the President&apos;s Award, <strong>{submittedName}</strong>!
+                                        </p>
+                                        <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
+                                            We&apos;ve received your application and our recruitment team will get back to you within a few days via <strong>WhatsApp</strong> or <strong>email</strong>. Keep an eye on your inbox!
+                                        </p>
                                         <button
                                             onClick={() => setSubmitted(false)}
                                             className="text-primary font-semibold text-sm hover:underline"
@@ -211,15 +218,15 @@ export default function JoinPage() {
                                 <div>
                                     <p className="font-semibold text-foreground mb-4">Follow Us</p>
                                     <div className="flex gap-3">
-                                        {[Instagram, Linkedin, Facebook].map((Icon, i) => (
-                                            <a
-                                                key={i}
-                                                href="#"
-                                                className="w-12 h-12 bg-teal-600/10 hover:bg-teal-600 rounded-full flex items-center justify-center transition-all text-teal-600 hover:text-white"
-                                            >
-                                                <Icon className="w-5 h-5" />
-                                            </a>
-                                        ))}
+                                        <a href="https://facebook.com/presidentsawardkyu" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-teal-600/10 hover:bg-teal-600 rounded-full flex items-center justify-center transition-all text-teal-600 hover:text-white" title="Facebook">
+                                            <Facebook className="w-5 h-5" />
+                                        </a>
+                                        <a href="https://instagram.com/presidentsawardkyu" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-teal-600/10 hover:bg-teal-600 rounded-full flex items-center justify-center transition-all text-teal-600 hover:text-white" title="Instagram">
+                                            <Instagram className="w-5 h-5" />
+                                        </a>
+                                        <a href="https://tiktok.com/@theawardkyu" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-teal-600/10 hover:bg-teal-600 rounded-full flex items-center justify-center transition-all text-teal-600 hover:text-white" title="TikTok">
+                                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.46 6.28 6.28 0 001.88-4.48V8.76a8.26 8.26 0 004.84 1.56v-3.45a4.85 4.85 0 01-1.14-.18z" /></svg>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -251,7 +258,7 @@ export default function JoinPage() {
                                         <span className="font-semibold text-foreground pr-4">{faq.question}</span>
                                         <ChevronDown className={`w-5 h-5 text-muted-foreground flex-shrink-0 transition-transform duration-200 ${openFaq === i ? 'rotate-180' : ''}`} />
                                     </button>
-                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${openFaq === i ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${openFaq === i ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
                                         <p className="px-5 pb-5 text-muted-foreground leading-relaxed">
                                             {faq.answer}
                                         </p>

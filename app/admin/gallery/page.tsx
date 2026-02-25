@@ -6,7 +6,7 @@ import type { GalleryImage } from '@/lib/types'
 import { toDirectImageUrl } from '@/lib/content'
 import { CustomSelect } from '@/components/custom-select'
 import { FocusPointPicker } from '@/components/focus-point-picker'
-import { Plus, Pencil, Trash2, X, Info, Layers, CheckCircle } from 'lucide-react'
+import { Plus, Pencil, Trash2, X, Info, Layers, CheckCircle, ImagePlus } from 'lucide-react'
 
 const DEFAULT_CATEGORIES = ['Adventure', 'Service', 'Skills', 'Recreation', 'Recognition']
 
@@ -34,6 +34,12 @@ export default function AdminGalleryPage() {
     const [bulkFocus, setBulkFocus] = useState(50)
     const [bulkSaving, setBulkSaving] = useState(false)
     const [bulkResult, setBulkResult] = useState<{ count: number } | null>(null)
+
+    // Inline quick-add per category
+    const [quickAddCat, setQuickAddCat] = useState<string | null>(null)
+    const [quickAddLinks, setQuickAddLinks] = useState('')
+    const [quickAddPrefix, setQuickAddPrefix] = useState('')
+    const [quickAddSaving, setQuickAddSaving] = useState(false)
 
     const fetchImages = async () => {
         const { data } = await supabase.from('gallery').select('*').order('sort_order')
@@ -133,6 +139,32 @@ export default function AdminGalleryPage() {
         setBulkDescription('')
         fetchImages()
         setTimeout(() => { setShowBulk(false); setBulkResult(null) }, 2000)
+    }
+
+    // Quick-add handler for existing categories
+    const handleQuickAdd = async (category: string) => {
+        const links = quickAddLinks.split('\n').map(l => l.trim()).filter(l => l.length > 0)
+        if (links.length === 0) return
+
+        setQuickAddSaving(true)
+        const maxOrder = images.length > 0 ? Math.max(...images.map(i => i.sort_order)) : 0
+        const catImages = images.filter(i => i.category === category)
+        const rows = links.map((url, i) => ({
+            title: quickAddPrefix ? `${quickAddPrefix} ${catImages.length + i + 1}` : `${category} ${catImages.length + i + 1}`,
+            category,
+            description: '',
+            image_url: url,
+            focus_point: 50,
+            coming_soon: false,
+            sort_order: maxOrder + i + 1,
+        }))
+
+        await supabase.from('gallery').insert(rows)
+        setQuickAddSaving(false)
+        setQuickAddLinks('')
+        setQuickAddPrefix('')
+        setQuickAddCat(null)
+        fetchImages()
     }
 
     const bulkPreviewLinks = bulkLinks.split('\n').map(l => l.trim()).filter(l => l.length > 0)
@@ -413,49 +445,220 @@ export default function AdminGalleryPage() {
                 </div>
             )}
 
-            {/* ───── Grid ───── */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {images.map((img) => {
-                    const displayUrl = toDirectImageUrl(img.image_url)
+            {/* ───── Grid grouped by category → sub-group ───── */}
+            {(() => {
+                // Helper: extract title prefix by stripping trailing number
+                const getSubGroup = (title: string) => {
+                    const match = title.match(/^(.+?)\s*\d*$/)
+                    return match ? match[1].trim() : title
+                }
+
+                // Seed with ALL known categories so empty ones are visible
+                const grouped: Record<string, GalleryImage[]> = {}
+                categories.filter(c => c !== 'All').forEach(cat => { grouped[cat] = [] })
+                images.forEach(img => {
+                    const cat = img.category || 'Uncategorized'
+                    if (!grouped[cat]) grouped[cat] = []
+                    grouped[cat].push(img)
+                })
+
+                return Object.entries(grouped).map(([cat, catImages]) => {
+                    // Build sub-groups within category by title prefix
+                    const subGroups: Record<string, GalleryImage[]> = {}
+                    catImages.forEach(img => {
+                        const sg = getSubGroup(img.title)
+                        if (!subGroups[sg]) subGroups[sg] = []
+                        subGroups[sg].push(img)
+                    })
+
                     return (
-                        <div key={img.id} className="bg-card rounded-xl border border-border overflow-hidden group">
-                            <div className="relative aspect-[4/3]">
-                                {displayUrl ? (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img
-                                        src={displayUrl}
-                                        alt={img.title}
-                                        className="w-full h-full object-cover"
-                                        style={{ objectPosition: `center ${img.focus_point ?? 50}%` }}
-                                    />
-                                ) : (
-                                    <div className={`w-full h-full flex items-center justify-center ${img.coming_soon ? 'bg-amber-50' : 'bg-muted/30'}`}>
-                                        <p className={`text-xs font-medium ${img.coming_soon ? 'text-amber-600' : 'text-muted-foreground'}`}>
-                                            {img.coming_soon ? 'Coming Soon' : 'No image'}
-                                        </p>
-                                    </div>
-                                )}
-                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                    <button onClick={() => handleEdit(img)} className="p-2 bg-white/20 rounded-lg hover:bg-white/30"><Pencil className="w-4 h-4 text-white" /></button>
-                                    <button onClick={() => handleDelete(img.id)} className="p-2 bg-white/20 rounded-lg hover:bg-red-500/50"><Trash2 className="w-4 h-4 text-white" /></button>
+                        <div key={cat} className="mb-10">
+                            {/* Category header */}
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-2">
+                                    <h3 className="text-lg font-display font-bold text-foreground">{cat}</h3>
+                                    <span className="text-xs text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">{catImages.length}</span>
                                 </div>
-                                {img.focus_point != null && img.focus_point !== 50 && (
-                                    <div className="absolute top-2 left-2 bg-black/50 text-white text-[9px] px-1.5 py-0.5 rounded font-mono">
-                                        ↕ {img.focus_point}%
+                                <button
+                                    onClick={() => { setQuickAddCat(quickAddCat === cat ? null : cat); setQuickAddLinks(''); setQuickAddPrefix('') }}
+                                    className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5"
+                                >
+                                    <ImagePlus className="w-4 h-4" />
+                                    New Sub-group
+                                </button>
+                            </div>
+
+                            {/* Quick-add for NEW sub-group in this category */}
+                            {quickAddCat === cat && (
+                                <div className="bg-primary/5 border border-primary/15 rounded-xl p-4 mb-4 space-y-3">
+                                    <p className="text-xs text-muted-foreground">Adding a <strong>new sub-group</strong> under &quot;{cat}&quot;</p>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1">Paste image URLs <span className="text-muted-foreground font-normal">(one per line)</span></label>
+                                        <textarea
+                                            value={quickAddLinks}
+                                            onChange={e => setQuickAddLinks(e.target.value)}
+                                            rows={3}
+                                            className="w-full bg-white/80 border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y font-mono"
+                                            placeholder={`/Gallery/Service/Raimu/IMG_001.jpg\nhttps://drive.google.com/file/d/abc123/view`}
+                                            autoFocus
+                                        />
+                                        {quickAddLinks.split('\n').filter(l => l.trim()).length > 0 && (
+                                            <p className="text-xs text-muted-foreground mt-1">{quickAddLinks.split('\n').filter(l => l.trim()).length} link(s)</p>
+                                        )}
                                     </div>
-                                )}
-                            </div>
-                            <div className="p-3">
-                                <p className="font-medium text-sm text-foreground truncate">{img.title}</p>
-                                <p className="text-xs text-muted-foreground">{img.category}</p>
-                            </div>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1">Sub-group name <span className="text-destructive">*</span></label>
+                                        <input
+                                            value={quickAddPrefix}
+                                            onChange={e => setQuickAddPrefix(e.target.value)}
+                                            className="w-full bg-white/80 border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                                            placeholder="e.g. Raimu Special Unit"
+                                        />
+                                        <p className="text-xs text-muted-foreground mt-1">Titles: &quot;{quickAddPrefix || '...'} 1&quot;, &quot;{quickAddPrefix || '...'} 2&quot;, etc.</p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => handleQuickAdd(cat)}
+                                            disabled={quickAddLinks.split('\n').filter(l => l.trim()).length === 0 || !quickAddPrefix.trim() || quickAddSaving}
+                                            className="bg-primary text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-2"
+                                        >
+                                            {quickAddSaving ? (
+                                                <><div className="animate-spin w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full" /> Adding...</>
+                                            ) : (
+                                                <>Create Sub-group</>
+                                            )}
+                                        </button>
+                                        <button onClick={() => setQuickAddCat(null)} className="bg-muted text-foreground px-5 py-2 rounded-lg text-sm font-medium hover:bg-muted/70 transition-colors">Cancel</button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Sub-groups */}
+                            {Object.entries(subGroups).map(([sgName, sgImages]) => {
+                                const sgKey = `${cat}::${sgName}`
+                                return (
+                                    <div key={sgKey} className="mb-5">
+                                        <div className="flex items-center justify-between mb-2 ml-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                                                <h4 className="text-sm font-semibold text-foreground/80">{sgName}</h4>
+                                                <span className="text-[11px] text-muted-foreground">{sgImages.length} photo{sgImages.length !== 1 ? 's' : ''}</span>
+                                            </div>
+                                            <button
+                                                onClick={() => {
+                                                    if (quickAddCat === sgKey) { setQuickAddCat(null) }
+                                                    else { setQuickAddCat(sgKey); setQuickAddLinks(''); setQuickAddPrefix(sgName) }
+                                                }}
+                                                className="text-xs font-medium text-primary/70 hover:text-primary transition-colors flex items-center gap-1"
+                                            >
+                                                <ImagePlus className="w-3.5 h-3.5" />
+                                                Add Photos
+                                            </button>
+                                        </div>
+
+                                        {/* Inline quick-add for EXISTING sub-group */}
+                                        {quickAddCat === sgKey && (
+                                            <div className="bg-primary/5 border border-primary/15 rounded-xl p-4 mb-3 space-y-3">
+                                                <p className="text-xs text-muted-foreground">Adding more photos to <strong>&quot;{sgName}&quot;</strong> (currently {sgImages.length})</p>
+                                                <div>
+                                                    <label className="block text-sm font-medium mb-1">Paste image URLs <span className="text-muted-foreground font-normal">(one per line — appends to existing)</span></label>
+                                                    <textarea
+                                                        value={quickAddLinks}
+                                                        onChange={e => setQuickAddLinks(e.target.value)}
+                                                        rows={3}
+                                                        className="w-full bg-white/80 border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y font-mono"
+                                                        placeholder={`/Gallery/${cat}/${sgName}/IMG_001.jpg\nhttps://drive.google.com/file/d/abc123/view`}
+                                                        autoFocus
+                                                    />
+                                                    {quickAddLinks.split('\n').filter(l => l.trim()).length > 0 && (
+                                                        <p className="text-xs text-muted-foreground mt-1">{quickAddLinks.split('\n').filter(l => l.trim()).length} photo(s) → &quot;{sgName} {sgImages.length + 1}&quot;, &quot;{sgName} {sgImages.length + 2}&quot;, etc.</p>
+                                                    )}
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => handleQuickAdd(cat)}
+                                                        disabled={quickAddLinks.split('\n').filter(l => l.trim()).length === 0 || quickAddSaving}
+                                                        className="bg-primary text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-2"
+                                                    >
+                                                        {quickAddSaving ? (
+                                                            <><div className="animate-spin w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full" /> Adding...</>
+                                                        ) : (
+                                                            <>Add {quickAddLinks.split('\n').filter(l => l.trim()).length} to {sgName}</>
+                                                        )}
+                                                    </button>
+                                                    <button onClick={() => setQuickAddCat(null)} className="bg-muted text-foreground px-5 py-2 rounded-lg text-sm font-medium hover:bg-muted/70 transition-colors">Cancel</button>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                                            {sgImages.map((img) => {
+                                                const displayUrl = toDirectImageUrl(img.image_url)
+                                                return (
+                                                    <div key={img.id} className="bg-card rounded-xl border border-border overflow-hidden group">
+                                                        <div className="relative aspect-[4/3]">
+                                                            {displayUrl ? (
+                                                                // eslint-disable-next-line @next/next/no-img-element
+                                                                <img
+                                                                    src={displayUrl}
+                                                                    alt={img.title}
+                                                                    className="w-full h-full object-cover"
+                                                                    style={{ objectPosition: `center ${img.focus_point ?? 50}%` }}
+                                                                />
+                                                            ) : (
+                                                                <div className={`w-full h-full flex items-center justify-center ${img.coming_soon ? 'bg-amber-50' : 'bg-muted/30'}`}>
+                                                                    <p className={`text-xs font-medium ${img.coming_soon ? 'text-amber-600' : 'text-muted-foreground'}`}>
+                                                                        {img.coming_soon ? 'Coming Soon' : 'No image'}
+                                                                    </p>
+                                                                </div>
+                                                            )}
+                                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                                                <button onClick={() => handleEdit(img)} className="p-2 bg-white/20 rounded-lg hover:bg-white/30"><Pencil className="w-4 h-4 text-white" /></button>
+                                                                <button onClick={() => handleDelete(img.id)} className="p-2 bg-white/20 rounded-lg hover:bg-red-500/50"><Trash2 className="w-4 h-4 text-white" /></button>
+                                                            </div>
+                                                            {img.focus_point != null && img.focus_point !== 50 && (
+                                                                <div className="absolute top-2 left-2 bg-black/50 text-white text-[9px] px-1.5 py-0.5 rounded font-mono">
+                                                                    ↕ {img.focus_point}%
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div className="p-2.5">
+                                                            <p className="font-medium text-xs text-foreground truncate">{img.title}</p>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })}
+
+                                            {/* Add photo card within sub-group */}
+                                            <button
+                                                onClick={() => {
+                                                    if (quickAddCat === sgKey) { setQuickAddCat(null) }
+                                                    else { setQuickAddCat(sgKey); setQuickAddLinks(''); setQuickAddPrefix(sgName) }
+                                                }}
+                                                className="bg-muted/20 rounded-xl border-2 border-dashed border-border hover:border-primary/40 hover:bg-primary/5 transition-all flex flex-col items-center justify-center aspect-[4/3] gap-1.5 group/add"
+                                            >
+                                                <ImagePlus className="w-5 h-5 text-muted-foreground group-hover/add:text-primary transition-colors" />
+                                                <span className="text-[11px] font-medium text-muted-foreground group-hover/add:text-primary transition-colors">Add More</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+
+                            {/* Empty category message */}
+                            {catImages.length === 0 && quickAddCat !== cat && (
+                                <div className="text-center py-8 text-muted-foreground text-sm border-2 border-dashed border-border rounded-xl">
+                                    No images yet. Click &quot;New Sub-group&quot; to add photos.
+                                </div>
+                            )}
                         </div>
                     )
-                })}
-            </div>
-            {images.length === 0 && (
+                })
+            })()}
+            {images.length === 0 && categories.length <= 1 && (
                 <div className="text-center py-12 text-muted-foreground">No gallery images yet.</div>
             )}
         </div>
     )
 }
+

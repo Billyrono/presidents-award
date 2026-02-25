@@ -116,6 +116,37 @@ body {
   font-family: var(--font-sans);
 }
 
+/* ─── Hide Scrollbar (all browsers) ─── */
+* {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* ─── Selection color ─── */
+::selection {
+  background: hsl(var(--primary) / 0.15);
+  color: hsl(var(--foreground));
+}
+
+/* ─── Admin panel: no smooth scroll on mobile ─── */
+@media (max-width: 768px) {
+  .admin-panel {
+    scroll-behavior: auto;
+    overscroll-behavior: none;
+  }
+}
+
+/* ─── Scroll-aware sections ─── */
+[id] {
+  scroll-margin-top: 5rem;
+}
+
 /* Subtle Grid Background Pattern */
 .bg-grid-subtle {
   background-image: linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),

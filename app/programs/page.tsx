@@ -36,7 +36,7 @@ const pillars = [
         icon: Compass,
         title: 'Adventurous Journey',
         description: 'Participants undertake a challenging journey in a small team in an unfamiliar environment, requiring determination, physical effort, perseverance and cooperation to complete.',
-        details: ['Three journeys in Aberdares (AJ I, II & III)', 'One journey in Ngong Hills', 'Team navigation & survival', 'Purpose-driven expeditions'],
+        details: ['Four journeys in Aberdares (AJ I, II, III \u0026 IV)', 'One journey in Ngong Hills', 'Team navigation \u0026 survival', 'Purpose-driven expeditions'],
     },
 ]
 
