@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { LayoutShell } from '@/components/layout-shell'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata: Metadata = {
   title: "President's Award — Kirinyaga University | #WORLDREADY",
@@ -52,6 +54,8 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans antialiased">
         <LayoutShell>{children}</LayoutShell>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
