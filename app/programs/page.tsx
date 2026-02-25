@@ -66,7 +66,7 @@ const levels = [
         bgColor: 'bg-yellow-50',
         borderColor: 'border-yellow-200',
         circleBg: 'bg-[#C9A84C]',
-        requirements: ['All 4 activities plus Gold Residential', 'Major expedition', 'Significant community impact', 'State House ceremony'],
+        requirements: ['All 4 activities plus Gold Residential Project', 'Major expedition', 'Significant community impact', 'State House ceremony'],
     },
 ]
 
