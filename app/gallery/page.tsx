@@ -1,17 +1,24 @@
 'use client'
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
+import Image from 'next/image'
 import { PageHero } from '@/components/page-hero'
 import { ScrollReveal } from '@/components/scroll-reveal'
 import { getGallery } from '@/lib/content'
 import { toDirectImageUrl } from '@/lib/content'
 import type { GalleryImage as GalleryImageType } from '@/lib/types'
-import { X, ChevronLeft, ChevronRight, ZoomIn, ArrowLeft } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react'
 
 // Extract sub-group name by stripping trailing numbers
 function getSubGroup(title: string) {
     const match = title.match(/^(.+?)\s*\d*$/)
     return match ? match[1].trim() : title
+}
+
+// Check if a URL is external (Google Drive, etc.)
+function isExternal(url: string | null) {
+    if (!url) return false
+    return url.startsWith('http://') || url.startsWith('https://')
 }
 
 interface SubGroupTile {
@@ -107,6 +114,55 @@ export default function GalleryPage() {
 
     const lightboxImage = activeSubGroup && lightboxIndex !== null ? activeSubGroup.images[lightboxIndex] : null
 
+    // Render an optimized image — uses next/image for local, img for external
+    const renderImage = (url: string | null, alt: string, fill: boolean, priority: boolean = false, focusPoint?: number, className?: string) => {
+        if (!url) return null
+        const directUrl = toDirectImageUrl(url)
+        if (!directUrl) return null
+
+        if (isExternal(directUrl)) {
+            return (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                    src={directUrl}
+                    alt={alt}
+                    className={className || 'w-full h-full object-cover'}
+                    style={focusPoint !== undefined ? { objectPosition: `center ${focusPoint}%` } : undefined}
+                    loading={priority ? 'eager' : 'lazy'}
+                />
+            )
+        }
+
+        if (fill) {
+            return (
+                <Image
+                    src={directUrl}
+                    alt={alt}
+                    fill
+                    className={className || 'object-cover'}
+                    style={focusPoint !== undefined ? { objectPosition: `center ${focusPoint}%` } : undefined}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    priority={priority}
+                    quality={80}
+                />
+            )
+        }
+
+        return (
+            <Image
+                src={directUrl}
+                alt={alt}
+                width={800}
+                height={600}
+                className={className || 'w-full h-full object-cover'}
+                style={focusPoint !== undefined ? { objectPosition: `center ${focusPoint}%` } : undefined}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                priority={priority}
+                quality={80}
+            />
+        )
+    }
+
     return (
         <>
             <PageHero
@@ -170,15 +226,8 @@ export default function GalleryPage() {
                                                 className="group relative overflow-hidden rounded-xl aspect-[4/3] border border-primary/10 hover:border-primary/30 transition-all duration-300 cursor-pointer hover:shadow-lg"
                                                 onClick={() => displayUrl && setLightboxIndex(index)}
                                             >
-                                                {displayUrl ? (
-                                                    // eslint-disable-next-line @next/next/no-img-element
-                                                    <img
-                                                        src={displayUrl}
-                                                        alt={image.title}
-                                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                                        style={{ objectPosition: `center ${image.focus_point ?? 50}%` }}
-                                                    />
-                                                ) : (
+                                                {renderImage(image.image_url, image.title, true, index < 4, image.focus_point, 'object-cover transition-transform duration-500 group-hover:scale-110')}
+                                                {!displayUrl && (
                                                     <div className="absolute inset-0 bg-muted/30 flex items-center justify-center">
                                                         <p className="text-muted-foreground/50 text-sm">No image</p>
                                                     </div>
@@ -201,15 +250,8 @@ export default function GalleryPage() {
                                                 className="group relative overflow-hidden rounded-2xl aspect-[4/3] border border-primary/10 hover:border-primary/30 transition-all duration-300 cursor-pointer hover:shadow-xl"
                                                 onClick={() => openSubGroup(tile)}
                                             >
-                                                {displayUrl ? (
-                                                    // eslint-disable-next-line @next/next/no-img-element
-                                                    <img
-                                                        src={displayUrl}
-                                                        alt={tile.name}
-                                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                                        style={{ objectPosition: `center ${tile.coverImage.focus_point ?? 50}%` }}
-                                                    />
-                                                ) : tile.coverImage.coming_soon ? (
+                                                {renderImage(tile.coverImage.image_url, tile.name, true, index < 3, tile.coverImage.focus_point, 'object-cover transition-transform duration-500 group-hover:scale-105')}
+                                                {!displayUrl && (tile.coverImage.coming_soon ? (
                                                     <div className="absolute inset-0 bg-[#C9A84C]/8">
                                                         <div className="absolute inset-0 flex items-center justify-center">
                                                             <div className="text-center px-4">
@@ -227,7 +269,7 @@ export default function GalleryPage() {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                )}
+                                                ))}
 
                                                 {/* Hover overlay */}
                                                 <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-6">
@@ -315,12 +357,24 @@ export default function GalleryPage() {
                         {/* Image */}
                         <div className="max-w-[90vw] max-h-[85vh] flex flex-col items-center pt-16" onClick={(e) => e.stopPropagation()}>
                             {lightboxUrl && (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img
-                                    src={lightboxUrl}
-                                    alt={lightboxImage.title}
-                                    className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl"
-                                />
+                                isExternal(lightboxUrl) ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img
+                                        src={lightboxUrl}
+                                        alt={lightboxImage.title}
+                                        className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl"
+                                    />
+                                ) : (
+                                    <Image
+                                        src={lightboxUrl}
+                                        alt={lightboxImage.title}
+                                        width={1200}
+                                        height={800}
+                                        className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl"
+                                        quality={90}
+                                        priority
+                                    />
+                                )
                             )}
                             <div className="text-center mt-4">
                                 {lightboxImage.description && <p className="text-white/60 text-sm">{lightboxImage.description}</p>}
@@ -338,19 +392,11 @@ export default function GalleryPage() {
                                                 key={img.id}
                                                 onClick={(e) => { e.stopPropagation(); setLightboxIndex(i) }}
                                                 className={`flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-all duration-200 ${i === lightboxIndex
-                                                    ? 'border-primary ring-2 ring-primary/30 scale-110'
-                                                    : 'border-white/20 opacity-50 hover:opacity-80'
+                                                        ? 'border-primary ring-2 ring-primary/30 scale-110'
+                                                        : 'border-white/20 opacity-50 hover:opacity-80'
                                                     }`}
                                             >
-                                                {thumbUrl && (
-                                                    // eslint-disable-next-line @next/next/no-img-element
-                                                    <img
-                                                        src={thumbUrl}
-                                                        alt={img.title}
-                                                        className="w-full h-full object-cover"
-                                                        style={{ objectPosition: `center ${img.focus_point ?? 50}%` }}
-                                                    />
-                                                )}
+                                                {thumbUrl && renderImage(img.image_url, img.title, true, false, img.focus_point, 'object-cover')}
                                             </button>
                                         )
                                     })}

@@ -78,7 +78,7 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`lg:hidden overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'max-h-[28rem] opacity-100' : 'max-h-0 opacity-0'
+        className={`lg:hidden overflow-hidden transition-all duration-400 ease-in-out ${isOpen ? 'max-h-[28rem] opacity-100' : 'max-h-0 opacity-0'
           }`}
       >
         <div className="px-4 pb-4 pt-2 bg-white border-t border-border/30 space-y-1">

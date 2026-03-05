@@ -112,12 +112,24 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                 <section className="px-4 md:px-8 -mt-10 relative z-10">
                     <div className="max-w-4xl mx-auto">
                         <div className="relative aspect-[16/9] rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                src={featuredUrl}
-                                alt={article.title}
-                                className="w-full h-full object-cover"
-                            />
+                            {featuredUrl.startsWith('/') ? (
+                                <Image
+                                    src={featuredUrl}
+                                    alt={article.title}
+                                    fill
+                                    className="object-cover"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 896px"
+                                    priority
+                                    quality={85}
+                                />
+                            ) : (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                    src={featuredUrl}
+                                    alt={article.title}
+                                    className="w-full h-full object-cover"
+                                />
+                            )}
                         </div>
                     </div>
                 </section>

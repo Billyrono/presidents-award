@@ -25,7 +25,7 @@ export function CustomFooter() {
             <div>
               <Link href="/admin" className="flex items-center gap-3" title="">
                 <Image
-                  src="/Logo/PA Logo.svg"
+                  src="/Logo/PA Logo Dark.svg"
                   alt="President's Award Logo"
                   width={48}
                   height={48}

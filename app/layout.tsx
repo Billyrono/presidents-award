@@ -5,6 +5,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://presidents-award.vercel.app'),
   title: "President's Award — Kirinyaga University | #WORLDREADY",
   description: "Kirinyaga University President's Award Chapter. Empowering youth through adventure, service, skills development, and personal growth.",
   icons: {
