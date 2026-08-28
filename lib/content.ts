@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import type { Expedition, Project, NewsArticle, GalleryImage, SiteSetting } from './types'
+import type { Expedition, Project, NewsArticle, GalleryImage, SiteSetting, Event } from './types'
 
 // ── Expeditions (Adventurous Journeys) ───────────────────────
 
@@ -105,6 +105,21 @@ export async function getSetting(key: string): Promise<string> {
         .single()
     if (error) return ''
     return data?.value || ''
+}
+
+// ── Events ──────────────────────────────────────────────────
+
+export async function getEvents(): Promise<Event[]> {
+    const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true })
+    if (error) {
+        console.error('Error fetching events:', error)
+        return []
+    }
+    return data || []
 }
 
 // ── Combined Stats ───────────────────────────────────────────

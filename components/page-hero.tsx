@@ -1,6 +1,6 @@
 'use client'
 
-import { Info, Layers, Trophy, Camera, Newspaper, Rocket } from 'lucide-react'
+import { Info, Layers, Trophy, Camera, Newspaper, Rocket, Shield } from 'lucide-react'
 
 const iconMap = {
     info: Info,
@@ -9,6 +9,7 @@ const iconMap = {
     camera: Camera,
     newspaper: Newspaper,
     rocket: Rocket,
+    shield: Shield,
 } as const
 
 interface PageHeroProps {

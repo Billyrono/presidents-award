@@ -55,3 +55,33 @@ export type SiteSetting = {
     value: string
     updated_at: string
 }
+
+export type Event = {
+    id: string
+    title: string
+    description: string | null
+    date: string | null
+    location: string | null
+    poster_url: string | null
+    details: string | null
+    is_active: boolean
+    sort_order: number
+    created_by: string | null
+    created_at: string
+}
+
+export type Application = {
+    id: string
+    full_name: string
+    email: string
+    phone: string
+    faculty: string
+    year_of_study: string
+    interests: string | null
+    message: string | null
+    status: 'received' | 'under_review' | 'accepted' | 'rejected'
+    status_updated_at: string | null
+    admin_notes: string | null
+    created_at: string
+}
+

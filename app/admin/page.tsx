@@ -2,25 +2,29 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { Newspaper, Mountain, ImageIcon, Settings, Home, ArrowRight } from 'lucide-react'
+import { Newspaper, Mountain, ImageIcon, Settings, Home, ArrowRight, Users, Calendar } from 'lucide-react'
 import Link from 'next/link'
 
 export default function AdminDashboard() {
-    const [counts, setCounts] = useState({ news: 0, expeditions: 0, projects: 0, gallery: 0 })
+    const [counts, setCounts] = useState({ news: 0, expeditions: 0, projects: 0, gallery: 0, events: 0, applications: 0 })
 
     useEffect(() => {
         const fetchCounts = async () => {
-            const [newsRes, expRes, projRes, galRes] = await Promise.all([
+            const [newsRes, expRes, projRes, galRes, evtRes, appRes] = await Promise.all([
                 supabase.from('news').select('id', { count: 'exact', head: true }),
                 supabase.from('expeditions').select('id', { count: 'exact', head: true }),
                 supabase.from('projects').select('id', { count: 'exact', head: true }),
                 supabase.from('gallery').select('id', { count: 'exact', head: true }),
+                supabase.from('events').select('id', { count: 'exact', head: true }),
+                supabase.from('applications').select('id', { count: 'exact', head: true }),
             ])
             setCounts({
                 news: newsRes.count || 0,
                 expeditions: expRes.count || 0,
                 projects: projRes.count || 0,
                 gallery: galRes.count || 0,
+                events: evtRes.count || 0,
+                applications: appRes.count || 0,
             })
         }
         fetchCounts()
@@ -28,9 +32,11 @@ export default function AdminDashboard() {
 
     const cards = [
         { label: 'News Articles', count: counts.news, icon: Newspaper, href: '/admin/news', color: 'bg-blue-500' },
+        { label: 'Events', count: counts.events, icon: Calendar, href: '/admin/events', color: 'bg-emerald-500' },
         { label: 'Adventurous Journeys', count: counts.expeditions, icon: Mountain, href: '/admin/expeditions', color: 'bg-teal-600' },
         { label: 'Residential Projects', count: counts.projects, icon: Home, href: '/admin/expeditions', color: 'bg-amber-500' },
         { label: 'Gallery Images', count: counts.gallery, icon: ImageIcon, href: '/admin/gallery', color: 'bg-purple-500' },
+        { label: 'Applications', count: counts.applications, icon: Users, href: '/admin/applications', color: 'bg-rose-500' },
         { label: 'Settings', count: null, icon: Settings, href: '/admin/settings', color: 'bg-gray-500' },
     ]
 

@@ -3,17 +3,35 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Heart, Mail } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ScrollReveal } from '@/components/scroll-reveal'
+import { getSettings } from '@/lib/content'
 
 export function CustomFooter() {
   const currentYear = new Date().getFullYear()
   const [email, setEmail] = useState('')
+  const [subscribed, setSubscribed] = useState(false)
+  const [contact, setContact] = useState({
+    phone: '+254 (0) 123 456 789',
+    email: 'info@presidentsaward.ke',
+    location: 'Kirinyaga University, Kerugoya',
+  })
+
+  useEffect(() => {
+    getSettings().then(s => {
+      setContact({
+        phone: s.contact_phone || '+254 (0) 123 456 789',
+        email: s.contact_email || 'info@presidentsaward.ke',
+        location: s.contact_location || 'Kirinyaga University, Kerugoya',
+      })
+    })
+  }, [])
 
   const handleNewsletter = (e: React.FormEvent) => {
     e.preventDefault()
-    alert('Thank you for subscribing!')
+    setSubscribed(true)
     setEmail('')
+    setTimeout(() => setSubscribed(false), 4000)
   }
 
   return (
@@ -63,12 +81,12 @@ export function CustomFooter() {
               <h4 className="font-semibold mb-4">Contact</h4>
               <ul className="space-y-2.5 text-sm text-white/70">
                 <li className="hover:text-white transition-colors">
-                  <a href="tel:+254123456789">+254 (0) 123 456 789</a>
+                  <a href={`tel:${contact.phone.replace(/[^0-9+]/g, '')}`}>{contact.phone}</a>
                 </li>
                 <li className="hover:text-white transition-colors">
-                  <a href="mailto:info@presidentsaward.ke">info@presidentsaward.ke</a>
+                  <a href={`mailto:${contact.email}`}>{contact.email}</a>
                 </li>
-                <li>Kirinyaga University, Kerugoya</li>
+                <li>{contact.location}</li>
                 <li className="pt-2">
                   <Link href="/join" className="inline-block text-primary-foreground bg-primary/80 hover:bg-primary hover:shadow-lg hover:-translate-y-0.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300">
                     Join the Program →
@@ -83,25 +101,32 @@ export function CustomFooter() {
             <div>
               <h4 className="font-semibold mb-4">Stay Updated</h4>
               <p className="text-white/60 text-sm mb-4">Get the latest news and expedition updates.</p>
-              <form onSubmit={handleNewsletter} className="flex gap-2">
-                <div className="relative flex-1 min-w-0">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                  <input
-                    type="email"
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="w-full bg-white/10 border border-white/15 rounded-lg pl-9 pr-3 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-primary/60 transition-colors min-w-0"
-                  />
+              {subscribed ? (
+                <div className="bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-sm text-white/90 flex items-center gap-2 animate-fade-in">
+                  <svg className="w-4 h-4 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Thanks for subscribing!
                 </div>
-                <button
-                  type="submit"
-                  className="bg-primary hover:bg-primary/80 hover:shadow-lg hover:-translate-y-0.5 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 whitespace-nowrap flex-shrink-0"
-                >
-                  Subscribe
-                </button>
-              </form>
+              ) : (
+                <form onSubmit={handleNewsletter} className="flex gap-2">
+                  <div className="relative flex-1 min-w-0">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                    <input
+                      type="email"
+                      placeholder="your@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full bg-white/10 border border-white/15 rounded-lg pl-9 pr-3 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-primary/60 transition-colors min-w-0"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="bg-primary hover:bg-primary/80 hover:shadow-lg hover:-translate-y-0.5 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 whitespace-nowrap flex-shrink-0"
+                  >
+                    Subscribe
+                  </button>
+                </form>
+              )}
             </div>
           </ScrollReveal>
         </div>

@@ -3,6 +3,7 @@ import { Hero } from '@/components/hero'
 import { ScrollReveal } from '@/components/scroll-reveal'
 import { Zap, Heart, Compass, Dumbbell, Home, ArrowRight, Award, Users, Mountain, Tent } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { UpcomingEventsSection } from '@/components/upcoming-events-section'
 
 const pillars = [
   { icon: Heart, title: 'Voluntary Service', bg: 'bg-teal-500/10', iconBg: 'bg-teal-600', slug: 'voluntary-service' },
@@ -131,6 +132,9 @@ export default function HomePage() {
           </ScrollReveal>
         </div>
       </section>
+
+      {/* Upcoming Events — auto-hides if no active events */}
+      <UpcomingEventsSection />
 
       {/* CTA Section */}
       <section className="py-24 px-4 md:px-8 bg-background">

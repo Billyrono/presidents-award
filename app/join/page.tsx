@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { PageHero } from '@/components/page-hero'
 import { ScrollReveal } from '@/components/scroll-reveal'
 import { Button } from '@/components/ui/button'
@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Mail, Phone, MapPin, Instagram, Facebook, ChevronDown, CheckCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { getSettings } from '@/lib/content'
 
 const faqs = [
     {
@@ -48,6 +49,21 @@ export default function JoinPage() {
     const [submitted, setSubmitted] = useState(false)
     const [submittedName, setSubmittedName] = useState('')
     const [error, setError] = useState('')
+    const [contact, setContact] = useState({
+        phone: '+254 (0) 123 456 789',
+        email: 'info@presidentsaward.ke',
+        location: 'Kirinyaga University, Kerugoya',
+    })
+
+    useEffect(() => {
+        getSettings().then(s => {
+            setContact({
+                phone: s.contact_phone || '+254 (0) 123 456 789',
+                email: s.contact_email || 'info@presidentsaward.ke',
+                location: s.contact_location || 'Kirinyaga University, Kerugoya',
+            })
+        })
+    }, [])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target
@@ -77,10 +93,27 @@ export default function JoinPage() {
             return
         }
 
+        // Fire email notifications in background (non-blocking)
+        fetch('/api/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: 'application',
+                name: formData.fullName,
+                email: formData.email,
+                phone: formData.phone,
+                faculty: formData.faculty,
+                year: formData.year,
+                interests: formData.interests,
+                message: formData.message,
+            }),
+        }).catch(err => console.error('Email notification failed:', err))
+
         setSubmittedName(formData.fullName)
         setSubmitted(true)
         setFormData({ fullName: '', email: '', phone: '', faculty: '', year: '', interests: '', message: '' })
     }
+
 
     return (
         <>
@@ -182,25 +215,25 @@ export default function JoinPage() {
 
                                 <div className="space-y-4">
                                     <a
-                                        href="tel:+254123456789"
+                                        href={`tel:${contact.phone.replace(/[^0-9+]/g, '')}`}
                                         className="flex items-start gap-4 p-5 rounded-xl hover:bg-primary/5 transition-colors group border border-transparent hover:border-primary/10"
                                     >
                                         <Phone className="w-6 h-6 text-teal-600 flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                                         <div>
                                             <p className="font-semibold text-foreground">Call Us</p>
-                                            <p className="text-muted-foreground text-sm">+254 (0) 123 456 789</p>
+                                            <p className="text-muted-foreground text-sm">{contact.phone}</p>
                                             <p className="text-muted-foreground text-xs mt-1">Mon – Fri, 9am – 5pm EAT</p>
                                         </div>
                                     </a>
 
                                     <a
-                                        href="mailto:info@presidentsaward.ke"
+                                        href={`mailto:${contact.email}`}
                                         className="flex items-start gap-4 p-5 rounded-xl hover:bg-primary/5 transition-colors group border border-transparent hover:border-primary/10"
                                     >
                                         <Mail className="w-6 h-6 text-teal-600 flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                                         <div>
                                             <p className="font-semibold text-foreground">Email</p>
-                                            <p className="text-muted-foreground text-sm">info@presidentsaward.ke</p>
+                                            <p className="text-muted-foreground text-sm">{contact.email}</p>
                                             <p className="text-muted-foreground text-xs mt-1">We&apos;ll respond within 24 hours</p>
                                         </div>
                                     </a>
@@ -209,7 +242,7 @@ export default function JoinPage() {
                                         <MapPin className="w-6 h-6 text-teal-600 flex-shrink-0 mt-0.5" />
                                         <div>
                                             <p className="font-semibold text-foreground">Location</p>
-                                            <p className="text-muted-foreground text-sm">Kirinyaga University, Kerugoya</p>
+                                            <p className="text-muted-foreground text-sm">{contact.location}</p>
                                             <p className="text-muted-foreground text-xs mt-1">Kirinyaga County, Kenya</p>
                                         </div>
                                     </div>
