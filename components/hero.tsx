@@ -1,11 +1,10 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { ChevronDown } from 'lucide-react'
-import { Button } from './ui/button'
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
 import { getSiteStats } from '@/lib/content'
+import { ArrowRight, Award, Compass, Mountain, Shield } from 'lucide-react'
 
 const HERO_IMAGES = [
   { src: '/Hero/Home/hero-bg.jpg', position: 'center center' },
@@ -19,13 +18,12 @@ const SLIDE_DURATION = 7000  // 7s per slide
 const FADE_DURATION = 1800   // 1.8s crossfade
 const KEN_BURNS_DURATION = 12 // 12s for full zoom/pan cycle
 
-// Ken Burns presets — each slide gets a unique slow zoom & pan direction
 const KEN_BURNS_PRESETS = [
-  { from: 'scale(1.0) translate(0%, 0%)', to: 'scale(1.15) translate(-2%, -1%)' },
-  { from: 'scale(1.15) translate(2%, 0%)', to: 'scale(1.0) translate(0%, 1%)' },
-  { from: 'scale(1.0) translate(-1%, 1%)', to: 'scale(1.12) translate(1%, -1%)' },
-  { from: 'scale(1.12) translate(0%, -1%)', to: 'scale(1.0) translate(-1%, 0%)' },
-  { from: 'scale(1.0) translate(1%, 0%)', to: 'scale(1.18) translate(-1%, -2%)' },
+  { from: 'scale(1.0) translate(0%, 0%)', to: 'scale(1.12) translate(-1.5%, -1%)' },
+  { from: 'scale(1.12) translate(1.5%, 0%)', to: 'scale(1.0) translate(0%, 1%)' },
+  { from: 'scale(1.0) translate(-1%, 1%)', to: 'scale(1.1) translate(1%, -1%)' },
+  { from: 'scale(1.1) translate(0%, -1%)', to: 'scale(1.0) translate(-1%, 0%)' },
+  { from: 'scale(1.0) translate(1%, 0%)', to: 'scale(1.14) translate(-1%, -1.5%)' },
 ]
 
 export function Hero() {
@@ -42,19 +40,16 @@ export function Hero() {
     getSiteStats().then(setStats)
   }, [])
 
-  // Auto-advance with cinematic crossfade
   useEffect(() => {
     const advance = () => {
       setIsTransitioning(true)
       setPrevIndex(currentIndex)
       const next = (currentIndex + 1) % HERO_IMAGES.length
 
-      // Start fading in the next slide
       setTimeout(() => {
         setCurrentIndex(next)
       }, 50)
 
-      // End transition after fade completes
       setTimeout(() => {
         setIsTransitioning(false)
         setPrevIndex(-1)
@@ -68,7 +63,7 @@ export function Hero() {
   }, [currentIndex])
 
   return (
-    <section className="relative h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)] flex flex-col items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen w-full flex flex-col justify-between items-center overflow-hidden bg-[#070b09] text-white pt-28 md:pt-32 pb-8 md:pb-12">
 
       {/* Ken Burns CSS */}
       <style jsx>{`
@@ -116,30 +111,9 @@ export function Hero() {
         .kb-2 { animation: kenBurns2 ${KEN_BURNS_DURATION}s ease-in-out forwards; }
         .kb-3 { animation: kenBurns3 ${KEN_BURNS_DURATION}s ease-in-out forwards; }
         .kb-4 { animation: kenBurns4 ${KEN_BURNS_DURATION}s ease-in-out forwards; }
-
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .hero-fade-in {
-          animation: fadeInUp 1s ease-out forwards;
-        }
-        .hero-fade-in-delay-1 { animation-delay: 0.2s; opacity: 0; }
-        .hero-fade-in-delay-2 { animation-delay: 0.4s; opacity: 0; }
-        .hero-fade-in-delay-3 { animation-delay: 0.6s; opacity: 0; }
-        .hero-fade-in-delay-4 { animation-delay: 0.8s; opacity: 0; }
-
-        /* Progress bar for current slide */
-        @keyframes slideProgress {
-          from { width: 0; }
-          to   { width: 100%; }
-        }
-        .slide-progress {
-          animation: slideProgress ${SLIDE_DURATION}ms linear forwards;
-        }
       `}</style>
 
-      {/* Carousel Background Images with Ken Burns */}
+      {/* Carousel Background Images */}
       {HERO_IMAGES.map((image, index) => {
         const isActive = currentIndex === index
         const isPrev = prevIndex === index && isTransitioning
@@ -155,7 +129,7 @@ export function Hero() {
           >
             <Image
               src={image.src}
-              alt={`President's Award - Slide ${index + 1}`}
+              alt={`President's Award slide ${index + 1}`}
               fill
               className="object-cover"
               priority={index === 0}
@@ -167,82 +141,90 @@ export function Hero() {
         )
       })}
 
-      {/* Dark cinematic overlay — multi-layer for depth */}
-      <div className="absolute inset-0 z-[3]" style={{
-        background: `
-          linear-gradient(to bottom,
-            rgba(0,0,0,0.55) 25%,
-            rgba(0,0,0,0.40) 50%,
-            rgba(0,0,0,0.45) 75%,
-            rgba(0,0,0,0.70) 100%
-          )
-        `
-      }} />
-      {/* Side vignette */}
-      <div className="absolute inset-0 z-[3]" style={{
-        background: `radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.3) 100%)`
-      }} />
+      {/* 50% overlay — visible darkening while photography still shines through */}
+      <div className="absolute inset-0 z-[3] bg-[#070b09]/50" />
+      {/* Top-gradient so navbar links stay readable */}
+      <div className="absolute top-0 inset-x-0 h-40 z-[3] bg-gradient-to-b from-[#070b09]/70 to-transparent" />
 
-      {/* Main Content */}
-      <div className="relative z-10 text-center px-4 md:px-8 max-w-5xl mx-auto flex flex-col items-center justify-center flex-1">
-        <div className="mb-3 md:mb-4 inline-block hero-fade-in hero-fade-in-delay-1">
-          <span className="text-xs md:text-sm font-semibold text-white bg-white/15 backdrop-blur-md px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/25 shadow-lg">
-            Kirinyaga University Chapter
+      {/* Central Content */}
+      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center flex flex-col items-center justify-center my-auto py-4">
+
+        {/* Eyebrow Label */}
+        <div className="flex items-center justify-center gap-3 mb-5">
+          <span className="h-px w-8 bg-gradient-to-r from-transparent to-[#C9A84C]/60" />
+          <span className="text-[10px] md:text-[11px] font-accent font-bold tracking-[0.3em] uppercase text-[#C9A84C]">
+            President&apos;s Award · Kirinyaga University
           </span>
+          <span className="h-px w-8 bg-gradient-to-l from-transparent to-[#C9A84C]/60" />
         </div>
 
-        <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight mb-3 md:mb-4 text-white leading-tight hero-fade-in hero-fade-in-delay-2" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>
+        {/* Headline */}
+        <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[5.25rem] font-display font-bold text-white leading-[1.08] tracking-tight mb-2 drop-shadow-md">
           President&apos;s Award
-          <span className="text-[#C9A84C] block" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.4)' }}>
-            Empowering Youth
-          </span>
         </h1>
-
-        <p className="text-sm sm:text-base md:text-xl text-white/90 mb-6 md:mb-8 max-w-3xl mx-auto leading-relaxed font-light hero-fade-in hero-fade-in-delay-3" style={{ textShadow: '0 1px 10px rgba(0,0,0,0.4)' }}>
-          Impacting positive life skills and ethical values to young people for a better society. Discover your potential and become #WORLDREADY.
+        <p className="text-xl sm:text-2xl md:text-3xl font-display italic text-[#C9A84C] mb-6 font-normal">
+          Kirinyaga University Chapter
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6 md:mb-10 hero-fade-in hero-fade-in-delay-4">
-          <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-white rounded-lg px-6 py-5 md:px-8 md:py-6 text-sm md:text-base font-semibold shadow-xl">
-            <Link href="/join">Start Your Journey</Link>
-          </Button>
-          <Button asChild variant="outline" size="lg" className="rounded-lg px-6 py-5 md:px-8 md:py-6 text-sm md:text-base font-semibold border-2 border-white/80 text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm shadow-xl">
-            <Link href="/about">Learn More</Link>
-          </Button>
+        {/* Subline */}
+        <p className="text-sm sm:text-base md:text-lg text-white/75 max-w-2xl mx-auto leading-relaxed font-light mb-8">
+          An expedition into your potential. A journey toward significance. Cultivating leadership, resilience, and voluntary service recognized at the highest national levels.
+        </p>
+
+        {/* Action Buttons */}
+        <div className="flex flex-row gap-4 justify-center items-center mb-10">
+          <Link
+            href="/join"
+            className="inline-flex items-center justify-center gap-2.5 bg-[#C9A84C] hover:bg-[#d8b758] text-[#070b09] text-[11px] font-accent font-bold tracking-[0.2em] uppercase px-8 py-3.5 rounded-sm transition-all duration-300 shadow-xl hover:-translate-y-0.5 whitespace-nowrap"
+          >
+            <span>Enrol in the Award</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+          <Link
+            href="/programs"
+            className="inline-flex items-center justify-center gap-2 border border-white/30 text-white/90 hover:bg-white/10 hover:border-[#C9A84C] text-[11px] font-accent font-bold tracking-[0.2em] uppercase px-7 py-3.5 rounded-sm transition-all duration-300 whitespace-nowrap"
+          >
+            Explore The Programme
+          </Link>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 w-full max-w-3xl hero-fade-in hero-fade-in-delay-4">
-          <div className="text-center rounded-xl p-3 md:p-4 bg-black/20 backdrop-blur-sm">
-            <div className="text-2xl md:text-4xl font-display font-bold text-[#C9A84C] mb-1">{stats.totalAwards}</div>
-            <p className="text-white/80 text-xs md:text-sm">Awards at State House</p>
+        {/* Stat Badges — no glass */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 w-full max-w-3xl">
+          <div className="text-center">
+            <p className="text-2xl md:text-3xl font-display font-bold text-[#C9A84C]">{stats.totalAwards}</p>
+            <p className="text-[10px] md:text-[10.5px] font-accent tracking-wider uppercase text-white/60 mt-1">State House Laureates</p>
           </div>
-          <div className="text-center rounded-xl p-3 md:p-4 bg-black/20 backdrop-blur-sm">
-            <div className="text-2xl md:text-4xl font-display font-bold text-[#C9A84C] mb-1">{stats.ajCount}</div>
-            <p className="text-white/80 text-xs md:text-sm">Adventurous Journeys</p>
+          <div className="text-center">
+            <p className="text-2xl md:text-3xl font-display font-bold text-[#C9A84C]">{stats.ajCount}</p>
+            <p className="text-[10px] md:text-[10.5px] font-accent tracking-wider uppercase text-white/60 mt-1">Mountain Traverses</p>
           </div>
-          <div className="text-center rounded-xl p-3 md:p-4 bg-black/20 backdrop-blur-sm">
-            <div className="text-2xl md:text-4xl font-display font-bold text-[#C9A84C] mb-1">{stats.rpCount}</div>
-            <p className="text-white/80 text-xs md:text-sm">Residential Projects</p>
+          <div className="text-center">
+            <p className="text-2xl md:text-3xl font-display font-bold text-[#C9A84C]">{stats.rpCount}</p>
+            <p className="text-[10px] md:text-[10.5px] font-accent tracking-wider uppercase text-white/60 mt-1">Civic Projects</p>
           </div>
-          <div className="text-center rounded-xl p-3 md:p-4 bg-black/20 backdrop-blur-sm">
-            <div className="text-2xl md:text-4xl font-display font-bold text-[#C9A84C] mb-1">{stats.pillarsCount}</div>
-            <p className="text-white/80 text-xs md:text-sm">Core Pillars</p>
+          <div className="text-center">
+            <p className="text-2xl md:text-3xl font-display font-bold text-[#C9A84C]">{stats.pillarsCount}</p>
+            <p className="text-[10px] md:text-[10.5px] font-accent tracking-wider uppercase text-white/60 mt-1">Award Pillars</p>
           </div>
         </div>
       </div>
 
-      {/* Subtle slide progress bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-[2px] z-20 bg-white/10">
-        <div
-          key={currentIndex}
-          className="h-full bg-[#C9A84C]/60 slide-progress"
-        />
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-4 md:bottom-6 left-1/2 transform -translate-x-1/2 animate-bounce z-10">
-        <ChevronDown className="w-6 h-6 md:w-8 md:h-8 text-white/70" />
+      {/* Slide Indicators */}
+      <div className="relative z-10 flex items-center gap-2 pt-4">
+        {HERO_IMAGES.map((_, i) => (
+          <button
+            key={i}
+            aria-label={`Go to slide ${i + 1}`}
+            onClick={() => {
+              setIsTransitioning(true)
+              setPrevIndex(currentIndex)
+              setTimeout(() => setCurrentIndex(i), 50)
+              setTimeout(() => { setIsTransitioning(false); setPrevIndex(-1) }, FADE_DURATION + 100)
+            }}
+            className={`h-[2.5px] transition-all duration-500 rounded-full ${i === currentIndex ? 'w-10 bg-[#C9A84C]' : 'w-4 bg-white/25 hover:bg-white/50'
+              }`}
+          />
+        ))}
       </div>
     </section>
   )

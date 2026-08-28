@@ -13,8 +13,10 @@ const config: Config = {
 	theme: {
 		extend: {
 			fontFamily: {
-				'display': ['Playfair Display', 'serif'],
-				'sans': ['Inter', 'sans-serif'],
+				'display': ['Playfair Display', 'Georgia', 'serif'],
+				'sans': ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+				'serif': ['Playfair Display', 'Georgia', 'serif'],
+				'accent': ['Cinzel', 'Playfair Display', 'serif'],
 			},
 			colors: {
 				background: 'hsl(var(--background))',

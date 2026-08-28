@@ -1,7 +1,7 @@
 'use client'
 
 import { PageHero } from '@/components/page-hero'
-import { ScrollReveal } from '@/components/scroll-reveal'
+import { MotionReveal } from '@/components/motion-reveal'
 import { Shield, Database, Cookie, UserCheck, Mail } from 'lucide-react'
 
 export default function PrivacyPolicyPage() {
@@ -16,14 +16,14 @@ export default function PrivacyPolicyPage() {
 
             <section className="py-16 px-4 md:px-8 bg-background">
                 <div className="max-w-3xl mx-auto">
-                    <ScrollReveal>
+                    <MotionReveal>
                         <p className="text-muted-foreground text-sm mb-12">
                             Last updated: February 2026
                         </p>
-                    </ScrollReveal>
+                    </MotionReveal>
 
                     {/* Section 1 */}
-                    <ScrollReveal>
+                    <MotionReveal>
                         <div className="mb-12">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -43,10 +43,10 @@ export default function PrivacyPolicyPage() {
                                 <p>We also collect basic technical data through essential cookies needed to keep the website functioning (such as authentication sessions).</p>
                             </div>
                         </div>
-                    </ScrollReveal>
+                    </MotionReveal>
 
                     {/* Section 2 */}
-                    <ScrollReveal delay={60}>
+                    <MotionReveal delay={60}>
                         <div className="mb-12">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -65,10 +65,10 @@ export default function PrivacyPolicyPage() {
                                 <p>We do <strong>not</strong> sell, trade, or share your personal data with third parties for marketing purposes.</p>
                             </div>
                         </div>
-                    </ScrollReveal>
+                    </MotionReveal>
 
                     {/* Section 3 */}
-                    <ScrollReveal delay={120}>
+                    <MotionReveal delay={120}>
                         <div className="mb-12">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -85,10 +85,10 @@ export default function PrivacyPolicyPage() {
                                 <p>We do not use any tracking, analytics, or advertising cookies.</p>
                             </div>
                         </div>
-                    </ScrollReveal>
+                    </MotionReveal>
 
                     {/* Section 4 */}
-                    <ScrollReveal delay={180}>
+                    <MotionReveal delay={180}>
                         <div className="mb-12">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -107,10 +107,10 @@ export default function PrivacyPolicyPage() {
                                 <p>Your data is stored securely using industry-standard encryption and access controls provided by our hosting infrastructure.</p>
                             </div>
                         </div>
-                    </ScrollReveal>
+                    </MotionReveal>
 
                     {/* Section 5 */}
-                    <ScrollReveal delay={240}>
+                    <MotionReveal delay={240}>
                         <div className="mb-12">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -128,7 +128,7 @@ export default function PrivacyPolicyPage() {
                                 </div>
                             </div>
                         </div>
-                    </ScrollReveal>
+                    </MotionReveal>
                 </div>
             </section>
         </>
