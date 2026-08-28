@@ -1,14 +1,17 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-// Server-side admin client — uses service role key, never sent to browser
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { autoRefreshToken: false, persistSession: false } }
-)
+// Lazy factory — only called at request time, not at build time
+function getAdminClient() {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        { auth: { autoRefreshToken: false, persistSession: false } }
+    )
+}
 
 async function getCallerRole(token: string): Promise<string | null> {
+    const supabaseAdmin = getAdminClient()
     const { data: { user }, error } = await supabaseAdmin.auth.getUser(token)
     if (error || !user) return null
     const { data } = await supabaseAdmin
@@ -37,6 +40,8 @@ export async function POST(request: Request) {
 
         const fullName = `${firstName.trim()} ${(surname || '').trim()}`.trim()
         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
+        const supabaseAdmin = getAdminClient()
 
         // Invite user — Supabase sends them an email to set their password
         const { data: inviteData, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(
@@ -82,6 +87,8 @@ export async function DELETE(request: Request) {
 
         const { userId } = await request.json()
         if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 })
+
+        const supabaseAdmin = getAdminClient()
 
         // Remove role (revokes access)
         await supabaseAdmin.from('user_roles').delete().eq('user_id', userId)

@@ -4,18 +4,10 @@ import { useEffect, useState, use } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
-import { ScrollReveal } from '@/components/scroll-reveal'
-import { Calendar, ArrowLeft, ArrowRight, User, Tag, Clock, Share2 } from 'lucide-react'
+import { MotionReveal } from '@/components/motion-reveal'
+import { Calendar, ArrowLeft, ArrowRight, User, Clock, Share2, Award, Bookmark } from 'lucide-react'
 import { getNewsBySlug, getNewsSlugs, toDirectImageUrl } from '@/lib/content'
 import type { NewsArticle } from '@/lib/types'
-
-const categoryColors: Record<string, string> = {
-    'Expeditions': 'bg-primary/10 text-primary',
-    'Recognition': 'bg-[#C9A84C]/10 text-[#C9A84C]',
-    'Programs': 'bg-teal-600/10 text-teal-600',
-    'Service': 'bg-red-500/10 text-red-600',
-    'Growth': 'bg-teal-600/10 text-teal-600',
-}
 
 export default function NewsDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params)
@@ -37,15 +29,24 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
     }, [slug])
 
     if (loading) {
-        return <div className="min-h-[60vh] flex items-center justify-center"><div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" /></div>
+        return (
+            <div className="min-h-[70vh] flex items-center justify-center bg-[#070b09]">
+                <div className="w-8 h-8 border-2 border-[#C9A84C] border-t-transparent rounded-full animate-spin" />
+            </div>
+        )
     }
 
     if (!article) {
         return (
-            <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
-                <h1 className="text-2xl font-display font-bold text-foreground mb-2">Article Not Found</h1>
-                <p className="text-muted-foreground mb-6">The article you&apos;re looking for doesn&apos;t exist.</p>
-                <Link href="/news" className="text-primary font-semibold hover:underline">← Back to News</Link>
+            <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 bg-[#070b09] text-white">
+                <h1 className="text-3xl font-display font-bold mb-3">Gazette Dispatch Not Found</h1>
+                <p className="text-white/60 mb-8 font-light">The requested chronicle record is not available or has been moved.</p>
+                <Link
+                    href="/news"
+                    className="inline-flex items-center gap-2 text-xs font-accent font-bold tracking-widest uppercase text-[#C9A84C] border-b border-[#C9A84C]/40 pb-0.5"
+                >
+                    <ArrowLeft className="w-4 h-4" /> Return to Chronicles
+                </Link>
             </div>
         )
     }
@@ -53,65 +54,82 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
     const currentIndex = allSlugs.indexOf(slug)
     const prevSlug = currentIndex > 0 ? allSlugs[currentIndex - 1] : null
     const nextSlug = currentIndex < allSlugs.length - 1 ? allSlugs[currentIndex + 1] : null
-    // Content is rendered via ReactMarkdown below
     const featuredUrl = toDirectImageUrl(article.featured_image)
     const readTime = Math.max(1, Math.ceil((article.content || '').split(' ').length / 200))
 
     return (
         <>
-            {/* Blog Hero */}
-            <section className="relative bg-primary pt-12 pb-20 px-4 md:px-8">
-                <div className="max-w-3xl mx-auto">
-                    {/* Back link */}
-                    <Link href="/news" className="inline-flex items-center gap-2 text-white/60 hover:text-white text-sm font-medium mb-8 transition-colors">
-                        <ArrowLeft className="w-4 h-4" /> All News
+            {/* High-End Dark Gazette Hero */}
+            <section className="relative bg-[#070b09] text-white pt-24 pb-20 md:pt-32 md:pb-28 px-6 md:px-10 overflow-hidden border-b border-[#C9A84C]/25">
+                <div className="absolute inset-0 z-0">
+                    <div
+                        className="absolute inset-0 opacity-[0.03]"
+                        style={{
+                            backgroundImage: 'radial-gradient(circle, #C9A84C 1px, transparent 1px)',
+                            backgroundSize: '28px 28px',
+                        }}
+                    />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[#C9A84C]/5 rounded-full blur-3xl" />
+                </div>
+
+                <div className="relative z-10 max-w-4xl mx-auto">
+                    {/* Return link */}
+                    <Link
+                        href="/news"
+                        className="inline-flex items-center gap-2 text-xs font-accent font-bold tracking-[0.2em] uppercase text-[#C9A84C] hover:text-white transition-colors mb-8 group"
+                    >
+                        <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
+                        <span>All Chronicles</span>
                     </Link>
 
-                    {/* Category & Meta */}
+                    {/* Meta Bar */}
                     <div className="flex flex-wrap items-center gap-3 mb-6">
-                        <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${categoryColors[article.category] || 'bg-white/10 text-white'}`}>
-                            {article.category}
+                        <span className="text-[10px] font-accent font-bold tracking-[0.2em] uppercase border border-[#C9A84C]/40 text-[#C9A84C] bg-[#C9A84C]/10 px-3 py-1 rounded-sm">
+                            {article.category || 'Gazette'}
                         </span>
-                        <div className="flex items-center gap-4 text-white/60 text-sm">
+                        <div className="flex items-center gap-4 text-white/50 text-xs font-mono">
                             <span className="flex items-center gap-1.5">
-                                <Calendar className="w-3.5 h-3.5" /> {article.date}
+                                <Calendar className="w-3.5 h-3.5 text-[#C9A84C]" /> {article.date}
                             </span>
+                            <span>·</span>
                             <span className="flex items-center gap-1.5">
-                                <Clock className="w-3.5 h-3.5" /> {readTime} min read
+                                <Clock className="w-3.5 h-3.5 text-[#C9A84C]" /> {readTime} min read
                             </span>
                         </div>
                     </div>
 
-                    {/* Title */}
-                    <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-6 leading-tight">
+                    {/* Headline */}
+                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6 leading-[1.15] tracking-tight">
                         {article.title}
                     </h1>
 
-                    {/* Description / Subtitle */}
-                    <p className="text-lg md:text-xl text-white/80 leading-relaxed mb-8 max-w-2xl">
-                        {article.description}
-                    </p>
+                    {/* Standfirst / Summary */}
+                    {article.description && (
+                        <p className="text-lg md:text-xl text-white/75 leading-relaxed font-light max-w-3xl mb-8">
+                            {article.description}
+                        </p>
+                    )}
 
-                    {/* Author / Published by */}
+                    {/* Byline */}
                     {article.published_by && (
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                                <User className="w-5 h-5 text-white/80" />
+                        <div className="flex items-center gap-3.5 pt-6 border-t border-white/10">
+                            <div className="w-10 h-10 rounded-sm bg-[#C9A84C]/20 border border-[#C9A84C]/40 flex items-center justify-center text-[#C9A84C] font-display font-bold text-sm">
+                                {article.published_by.charAt(0)}
                             </div>
                             <div>
-                                <p className="text-white font-semibold text-sm">{article.published_by}</p>
-                                <p className="text-white/50 text-xs">Published on {article.date}</p>
+                                <p className="text-white font-medium text-sm leading-snug">{article.published_by}</p>
+                                <p className="text-white/40 text-[11px] font-light">Official Chapter Gazette</p>
                             </div>
                         </div>
                     )}
                 </div>
             </section>
 
-            {/* Featured Image — overlapping hero */}
+            {/* Overlapping Hero Plate Image (if present) */}
             {featuredUrl && (
-                <section className="px-4 md:px-8 -mt-10 relative z-10">
+                <section className="px-6 md:px-10 -mt-10 relative z-10">
                     <div className="max-w-4xl mx-auto">
-                        <div className="relative aspect-[16/9] rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
+                        <div className="relative aspect-[16/9] rounded-sm overflow-hidden shadow-2xl border border-[#C9A84C]/30 bg-[#070b09]">
                             {featuredUrl.startsWith('/') ? (
                                 <Image
                                     src={featuredUrl}
@@ -120,7 +138,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                                     className="object-cover"
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 896px"
                                     priority
-                                    quality={85}
+                                    quality={90}
                                 />
                             ) : (
                                 // eslint-disable-next-line @next/next/no-img-element
@@ -135,56 +153,40 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                 </section>
             )}
 
-            {/* Blog Content */}
-            <section className="py-16 px-4 md:px-8 bg-background">
+            {/* Article Content */}
+            <section className="py-20 px-6 md:px-10 bg-background">
                 <div className="max-w-3xl mx-auto">
-                    {/* Article body — blog typography */}
-                    <article className="prose-custom">
+                    <article className="space-y-6 text-foreground/80 leading-[1.85] text-base md:text-lg font-light">
                         <ReactMarkdown
                             components={{
                                 h1: ({ children }) => (
-                                    <ScrollReveal>
-                                        <h1 className="text-3xl font-display font-bold text-foreground mt-12 mb-6">{children}</h1>
-                                    </ScrollReveal>
+                                    <h1 className="text-3xl font-display font-bold text-foreground mt-12 mb-6 tracking-tight">{children}</h1>
                                 ),
                                 h2: ({ children }) => (
-                                    <ScrollReveal>
-                                        <h2 className="text-2xl font-display font-bold text-foreground mt-12 mb-4">{children}</h2>
-                                    </ScrollReveal>
+                                    <h2 className="text-2xl font-display font-bold text-foreground mt-12 mb-4 tracking-tight">{children}</h2>
                                 ),
                                 h3: ({ children }) => (
-                                    <ScrollReveal>
-                                        <h3 className="text-xl font-display font-bold text-foreground mt-10 mb-4">{children}</h3>
-                                    </ScrollReveal>
+                                    <h3 className="text-xl font-display font-bold text-foreground mt-10 mb-4 tracking-tight">{children}</h3>
                                 ),
                                 p: ({ children }) => (
-                                    <ScrollReveal>
-                                        <p className="text-foreground/80 leading-[1.9] text-[1.125rem] mb-6 font-serif">{children}</p>
-                                    </ScrollReveal>
+                                    <p className="text-foreground/80 leading-[1.85] text-base md:text-lg mb-6 font-light">{children}</p>
                                 ),
                                 strong: ({ children }) => (
-                                    <strong className="font-bold text-foreground">{children}</strong>
+                                    <strong className="font-semibold text-foreground">{children}</strong>
                                 ),
                                 em: ({ children }) => (
-                                    <em className="italic">{children}</em>
+                                    <em className="italic text-foreground/90 font-serif">{children}</em>
                                 ),
                                 ul: ({ children }) => (
-                                    <ul className="list-disc pl-6 mb-6 space-y-2 text-foreground/80 text-[1.125rem] leading-[1.9] font-serif">{children}</ul>
+                                    <ul className="list-disc pl-6 mb-6 space-y-2 text-foreground/80 font-light">{children}</ul>
                                 ),
                                 ol: ({ children }) => (
-                                    <ol className="list-decimal pl-6 mb-6 space-y-2 text-foreground/80 text-[1.125rem] leading-[1.9] font-serif">{children}</ol>
-                                ),
-                                li: ({ children }) => (
-                                    <li className="pl-1">{children}</li>
+                                    <ol className="list-decimal pl-6 mb-6 space-y-2 text-foreground/80 font-light">{children}</ol>
                                 ),
                                 blockquote: ({ children }) => (
-                                    <blockquote className="border-l-4 border-primary/40 pl-6 py-2 my-6 bg-primary/5 rounded-r-xl italic text-foreground/70">{children}</blockquote>
-                                ),
-                                a: ({ href, children }) => (
-                                    <a href={href} className="text-primary font-semibold hover:underline" target="_blank" rel="noopener noreferrer">{children}</a>
-                                ),
-                                hr: () => (
-                                    <hr className="my-10 border-border" />
+                                    <blockquote className="border-l-2 border-[#C9A84C] pl-6 my-8 italic font-serif text-foreground/90 text-lg md:text-xl">
+                                        {children}
+                                    </blockquote>
                                 ),
                             }}
                         >
@@ -192,45 +194,25 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                         </ReactMarkdown>
                     </article>
 
-                    {/* Share + Tags */}
-                    <div className="mt-12 pt-8 border-t border-border">
-                        <div className="flex flex-wrap items-center justify-between gap-4">
-                            <div className="flex items-center gap-2">
-                                <Tag className="w-4 h-4 text-muted-foreground" />
-                                <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${categoryColors[article.category] || 'bg-muted text-foreground'}`}>
-                                    {article.category}
-                                </span>
-                            </div>
-                            {article.published_by && (
-                                <p className="text-sm text-muted-foreground flex items-center gap-2">
-                                    <User className="w-3.5 h-3.5" />
-                                    Published by <strong className="text-foreground">{article.published_by}</strong>
-                                </p>
-                            )}
-                        </div>
-                    </div>
+                    {/* Pagination Nav between Articles */}
+                    <div className="mt-16 pt-10 border-t border-border flex items-center justify-between gap-4">
+                        {prevSlug ? (
+                            <Link
+                                href={`/news/${prevSlug}`}
+                                className="inline-flex items-center gap-2 text-xs font-accent font-bold tracking-widest uppercase text-primary hover:text-foreground transition-colors"
+                            >
+                                <ArrowLeft className="w-4 h-4" /> Previous Dispatch
+                            </Link>
+                        ) : <div />}
 
-                    {/* Prev / Next Navigation */}
-                    <div className="mt-10 pt-8 border-t border-border">
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
-                            {prevSlug ? (
-                                <Link href={`/news/${prevSlug}`} className="group flex items-center gap-2 text-primary font-semibold text-sm hover:gap-3 transition-all">
-                                    <ArrowLeft className="w-4 h-4" />
-                                    <span>Previous Story</span>
-                                </Link>
-                            ) : <div />}
-                            <div className="text-center">
-                                <Link href="/news" className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors">
-                                    All News
-                                </Link>
-                            </div>
-                            {nextSlug ? (
-                                <Link href={`/news/${nextSlug}`} className="group flex items-center justify-end gap-2 text-primary font-semibold text-sm hover:gap-3 transition-all">
-                                    <span>Next Story</span>
-                                    <ArrowRight className="w-4 h-4" />
-                                </Link>
-                            ) : <div />}
-                        </div>
+                        {nextSlug && (
+                            <Link
+                                href={`/news/${nextSlug}`}
+                                className="inline-flex items-center gap-2 text-xs font-accent font-bold tracking-widest uppercase text-primary hover:text-foreground transition-colors"
+                            >
+                                Next Dispatch <ArrowRight className="w-4 h-4" />
+                            </Link>
+                        )}
                     </div>
                 </div>
             </section>

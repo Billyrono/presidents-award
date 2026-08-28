@@ -2,36 +2,41 @@
 
 import { useEffect, useState } from 'react'
 import { PageHero } from '@/components/page-hero'
-import { ScrollReveal } from '@/components/scroll-reveal'
-import { Award, Users, Mountain, Tent, MapPin, Quote, TrendingUp, Home } from 'lucide-react'
+import { MotionReveal } from '@/components/motion-reveal'
+import { Counter } from '@/components/counter'
+import { Award, Tent, Mountain, MapPin, Quote, ArrowRight, ShieldCheck, Landmark, CheckCircle2, Compass, Calendar } from 'lucide-react'
+import Link from 'next/link'
 import { getExpeditions, getProjects, getSiteStats } from '@/lib/content'
 import type { Expedition, Project } from '@/lib/types'
 
 const testimonials = [
     {
-        quote: 'The President\'s Award has been a great experience from start to finish. The expeditions through the Aberdares, the community service, the friendships — it all came together in a way I never expected. Standing at State House to receive my Gold Award was the highlight of my university life.',
+        quote: "The President's Award has been the defining journey of my university life. From navigating the freezing ridges of the Aberdares to teaching children in remote communities, it forged a level of grit I didn't know I possessed. Receiving my Gold Award at State House was the proudest day of my life.",
         name: 'Denis Kamotho',
-        role: 'Gold Awardee, Kirinyaga University',
+        role: 'Gold Awardee',
+        credential: 'State House Honouree · Kirinyaga Chapter',
+        initials: 'DK',
     },
     {
-        quote: 'It wasn\'t easy — there were moments during the expeditions when I wanted to give up the hike. But completing each section taught me that I\'m stronger than I think. The President\'s Award pushed me beyond my comfort zone and I came out more confident and determined.',
+        quote: "There were nights on the mountain when cold and exhaustion tested every ounce of our willpower. But completing each expedition proved that limits are self-imposed. The Award transforms how you approach every challenge in life and career.",
         name: 'Beryl Murimi',
-        role: 'Gold Awardee, Kirinyaga University',
+        role: 'Gold Awardee',
+        credential: 'State House Honouree · Kirinyaga Chapter',
+        initials: 'BM',
     },
     {
-        quote: 'The journey to Gold was quite challenging. The adventurous journeys tested my limits, and balancing the program with academics was tough. But every challenge built me stronger. Looking back now, I wouldn\'t trade a single moment — it shaped who I am today.',
+        quote: "Balancing engineering coursework with intense community projects and high-altitude treks demanded total discipline. The Award instilled leadership reflexes that set our alumni apart in every professional arena.",
         name: 'Margaret Karanja',
-        role: 'Gold Awardee, Kirinyaga University',
+        role: 'Gold Awardee',
+        credential: 'State House Honouree · Kirinyaga Chapter',
+        initials: 'MK',
     },
 ]
 
 export default function AchievementsPage() {
     const [expeditions, setExpeditions] = useState<Expedition[]>([])
     const [projects, setProjects] = useState<Project[]>([])
-    const [stats, setStats] = useState({
-        totalAwards: '20+', awardLevels: 'Bronze, Silver & Gold',
-        ajCount: 4, rpCount: 3, pillarsCount: 5, enrollmentStatus: 'Growing',
-    })
+    const [stats, setStats] = useState({ totalAwards: '20+', ajCount: 4, rpCount: 3, pillarsCount: 5 })
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -43,172 +48,247 @@ export default function AchievementsPage() {
         })
     }, [])
 
-    const milestones = [
-        { icon: Award, number: stats.totalAwards, title: 'Awards at State House', description: `${stats.awardLevels} — presented by the President of Kenya` },
-        { icon: Users, number: stats.enrollmentStatus, title: 'Enrollment', description: 'Increasing participation of students from diverse faculties each academic year' },
-        { icon: Tent, number: String(stats.ajCount), title: 'Adventurous Journeys', description: 'Successfully completed across Kenya — Aberdares and Ngong Hills' },
-        { icon: Mountain, number: String(stats.rpCount), title: 'Residential Projects', description: 'Impactful community projects serving vulnerable communities' },
-    ]
-
     return (
         <>
             <PageHero
-                title="Milestones & Achievements"
-                subtitle="Celebrating the journeys, service projects, and award recipients that define our chapter."
-                badge="Our Impact"
-                badgeIcon="trophy"
+                eyebrow="Roll of Distinction · State House Recognition"
+                title="The Honour Roll"
+                titleGold="Journeys, Projects &amp; Laureates"
+                subtitle="Documenting our chapter's greatest milestones — from gruelling mountain expeditions to the presidential presentation ceremonies at State House, Nairobi."
+                image="/Hero/Home/DSC_2956.JPG"
             />
 
-            {/* Stats Grid */}
-            <section className="py-20 px-4 md:px-8 bg-background">
-                <div className="max-w-5xl mx-auto">
-                    <ScrollReveal>
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-5xl font-display font-bold mb-6 text-foreground">By the Numbers</h2>
-                            <div className="w-24 h-1 bg-primary mx-auto" />
+            {/* State House Presidential Recognition Showcase */}
+            <section className="bg-[#070b09] text-white py-16 px-6 md:px-10 border-b border-[#C9A84C]/25 relative overflow-hidden">
+                <div className="absolute right-0 top-0 w-96 h-96 bg-[#C9A84C]/5 rounded-full blur-3xl pointer-events-none" />
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        <div className="lg:col-span-8 space-y-4">
+                            <div className="flex items-center gap-3">
+                                <Landmark className="w-5 h-5 text-[#C9A84C]" />
+                                <span className="text-[10.5px] font-accent font-bold tracking-[0.28em] uppercase text-[#C9A84C]">
+                                    State House Presidential Investiture
+                                </span>
+                            </div>
+                            <h2 className="text-3xl md:text-4xl font-display font-bold text-white tracking-tight">
+                                Over 20 Kirinyaga University Scholars Honoured by the Head of State
+                            </h2>
+                            <p className="text-white/70 text-sm md:text-base font-light leading-relaxed max-w-3xl">
+                                The Gold Award represents the zenith of youth accomplishment in Kenya. Our laureates are formally conferred by the President of the Republic of Kenya in an investiture ceremony at State House, standing as testament to unyielding discipline and civic excellence.
+                            </p>
                         </div>
-                    </ScrollReveal>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {milestones.map((milestone, i) => {
-                            const Icon = milestone.icon
-                            return (
-                                <ScrollReveal key={i} delay={i * 80}>
-                                    <div className="bg-muted/30 rounded-2xl p-8 text-center border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300 h-full">
-                                        <div className="inline-flex items-center justify-center w-14 h-14 bg-teal-600/10 rounded-full mb-4">
-                                            <Icon className="w-7 h-7 text-teal-600" />
-                                        </div>
-                                        <div className="text-4xl font-display font-bold text-primary mb-2">{milestone.number}</div>
-                                        <h3 className="text-lg font-semibold text-foreground mb-2">{milestone.title}</h3>
-                                        <p className="text-sm text-muted-foreground">{milestone.description}</p>
-                                    </div>
-                                </ScrollReveal>
-                            )
-                        })}
+                        <div className="lg:col-span-4 flex lg:justify-end">
+                            <div className="p-6 rounded-sm bg-white/5 border border-[#C9A84C]/40 text-center w-full max-w-xs">
+                                <Award className="w-8 h-8 text-[#C9A84C] mx-auto mb-2" />
+                                <div className="text-4xl font-display font-bold text-[#C9A84C] mb-1">
+                                    <Counter to={20} suffix="+" duration={2.2} />
+                                </div>
+                                <p className="text-xs font-semibold tracking-widest uppercase text-white/90">Gold Awardees</p>
+                                <p className="text-[11px] text-white/50 mt-1">Conferred at State House, Nairobi</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* Adventurous Journeys */}
-            <section className="py-20 px-4 md:px-8 bg-muted/30">
-                <div className="max-w-5xl mx-auto">
-                    <ScrollReveal>
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-5xl font-display font-bold mb-6 text-foreground">Adventurous Journeys</h2>
-                            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                                From Aberdares peaks to Ngong Hills ridges — building resilience and teamwork
-                            </p>
-                            <div className="w-24 h-1 bg-primary mx-auto mt-6" />
-                        </div>
-                    </ScrollReveal>
-                    {loading ? (
-                        <div className="flex justify-center py-12"><div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" /></div>
-                    ) : (
-                        <div className="grid md:grid-cols-2 gap-6">
-                            {expeditions.map((exp, i) => (
-                                <ScrollReveal key={exp.id} delay={i * 80}>
-                                    <div className="bg-card rounded-2xl p-8 border-2 border-primary/15 hover:border-primary/40 hover:shadow-lg transition-all duration-300 h-full group">
-                                        <div className="flex items-start justify-between mb-4">
-                                            <h3 className="text-xl font-display font-bold text-primary group-hover:text-primary/80 transition-colors">{exp.name}</h3>
-                                            <span className="text-xs font-bold bg-teal-600/10 text-teal-600 px-3 py-1 rounded-full whitespace-nowrap ml-4">
-                                                <Tent className="w-3 h-3 inline mr-1" />Adventure
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-2 mb-4">
-                                            <MapPin className="w-4 h-4 text-teal-600 flex-shrink-0" />
-                                            <span className="text-sm font-semibold text-teal-600">{exp.location}</span>
-                                        </div>
-                                        <p className="text-muted-foreground leading-relaxed">{exp.description}</p>
-                                        {exp.date && <p className="mt-3 text-xs font-medium text-primary/70">{exp.date}</p>}
-                                    </div>
-                                </ScrollReveal>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </section>
-
-            {/* Residential Projects */}
-            <section className="py-20 px-4 md:px-8 bg-background">
-                <div className="max-w-5xl mx-auto">
-                    <ScrollReveal>
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-5xl font-display font-bold mb-6 text-foreground">Residential Projects</h2>
-                            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                                Community service that creates lasting impact
-                            </p>
-                            <div className="w-24 h-1 bg-primary mx-auto mt-6" />
-                        </div>
-                    </ScrollReveal>
-                    {!loading && (
-                        <div className="grid md:grid-cols-2 gap-6">
-                            {projects.map((proj, i) => (
-                                <ScrollReveal key={proj.id} delay={i * 80}>
-                                    <div className="bg-card rounded-2xl p-8 border-2 border-[#C9A84C]/15 hover:border-[#C9A84C]/40 hover:shadow-lg transition-all duration-300 h-full group">
-                                        <div className="flex items-start justify-between mb-4">
-                                            <h3 className="text-xl font-display font-bold text-[#C9A84C] group-hover:text-[#C9A84C]/80 transition-colors">{proj.name}</h3>
-                                            <span className="text-xs font-bold bg-amber-500/10 text-amber-600 px-3 py-1 rounded-full whitespace-nowrap ml-4">
-                                                <Home className="w-3 h-3 inline mr-1" />Residential
-                                            </span>
-                                        </div>
-                                        {proj.location && (
-                                            <div className="flex items-center gap-2 mb-4">
-                                                <MapPin className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                                                <span className="text-sm font-semibold text-amber-600">{proj.location}</span>
-                                            </div>
-                                        )}
-                                        <p className="text-muted-foreground leading-relaxed">{proj.description}</p>
-                                    </div>
-                                </ScrollReveal>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </section>
-
-            {/* Leadership Growth */}
-            <section className="py-20 px-4 md:px-8 bg-muted/30">
-                <div className="max-w-4xl mx-auto">
-                    <ScrollReveal>
-                        <div className="bg-primary/5 rounded-2xl p-8 md:p-12 border border-primary/10">
-                            <div className="flex items-start gap-6">
-                                <TrendingUp className="w-12 h-12 text-teal-600 flex-shrink-0" />
-                                <div>
-                                    <h3 className="text-2xl font-display font-bold text-foreground mb-4">Leadership Growth</h3>
-                                    <p className="text-foreground/80 leading-relaxed mb-4">
-                                        Many of our alumni have advanced into leadership roles in university clubs, organizations, and community initiatives. The program provides continuous volunteer services that support social welfare, environmental protection, and youth empowerment.
-                                    </p>
-                                    <p className="text-foreground/80 leading-relaxed">
-                                        Looking ahead, the program aims to expand partnerships with other clubs and societies, local organizations, and support more students through the Award levels — ensuring every participant becomes <strong className="text-primary">#WORLDREADY</strong>.
-                                    </p>
+            {/* Impact Metric Counters */}
+            <section className="py-20 px-6 md:px-10 bg-[#0c120e] text-white border-b border-white/5">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 divide-y lg:divide-y-0 lg:divide-x divide-white/10">
+                        {[
+                            { to: 20, suffix: '+', label: 'State House Honours', desc: 'Conferred by the President of Kenya' },
+                            { to: 5, suffix: '', label: 'Mountain Expeditions', desc: 'Aberdares & Ngong Hills Traversed' },
+                            { to: 3, suffix: '', label: 'Residential Projects', desc: 'High-impact civic infrastructure' },
+                            { to: 100, suffix: '%', label: 'Completion Standard', desc: 'Rigorous international verification' },
+                        ].map((item, i) => (
+                            <MotionReveal key={item.label} delay={i * 0.1} className={`text-center ${i > 0 ? 'pt-6 lg:pt-0 lg:px-6' : 'lg:pr-6'}`}>
+                                <div className="text-4xl md:text-6xl font-display font-bold text-[#C9A84C] mb-2 leading-none">
+                                    <Counter to={item.to} suffix={item.suffix} duration={2.2} />
                                 </div>
-                            </div>
-                        </div>
-                    </ScrollReveal>
-                </div>
-            </section>
-
-            {/* Testimonials */}
-            <section className="py-20 px-4 md:px-8 bg-primary text-white">
-                <div className="max-w-5xl mx-auto">
-                    <ScrollReveal>
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">What Awardees Say</h2>
-                            <div className="w-24 h-1 bg-secondary mx-auto" />
-                        </div>
-                    </ScrollReveal>
-                    <div className="grid md:grid-cols-3 gap-6">
-                        {testimonials.map((t, i) => (
-                            <ScrollReveal key={i} delay={i * 100}>
-                                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/15 h-full flex flex-col">
-                                    <Quote className="w-8 h-8 text-[#C9A84C] mb-4 flex-shrink-0" />
-                                    <p className="text-white/90 leading-relaxed mb-6 flex-1 italic">&ldquo;{t.quote}&rdquo;</p>
-                                    <div>
-                                        <p className="font-semibold text-white">{t.name}</p>
-                                        <p className="text-white/60 text-sm">{t.role}</p>
-                                    </div>
-                                </div>
-                            </ScrollReveal>
+                                <p className="text-white font-semibold text-sm mb-1">{item.label}</p>
+                                <p className="text-white/40 text-xs font-light">{item.desc}</p>
+                            </MotionReveal>
                         ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Adventurous Journeys Log */}
+            <section className="py-24 md:py-32 px-6 md:px-10 bg-background">
+                <div className="max-w-7xl mx-auto">
+                    <MotionReveal className="mb-16">
+                        <div className="flex items-center gap-3 mb-4">
+                            <span className="h-px w-8 bg-[#C9A84C]/50" />
+                            <p className="text-[10.5px] font-accent font-bold tracking-[0.28em] uppercase text-[#C9A84C]">Wilderness Traverses</p>
+                        </div>
+                        <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground tracking-tight">
+                            The Expedition Logbook
+                        </h2>
+                        <p className="text-foreground/60 mt-4 max-w-2xl text-base md:text-lg font-light leading-relaxed">
+                            Self-sufficient, multi-day wilderness expeditions across demanding highland topography — fostering team fortitude and crisis resilience.
+                        </p>
+                    </MotionReveal>
+
+                    {loading ? (
+                        <div className="flex justify-center py-20">
+                            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {expeditions.map((exp, i) => (
+                                <MotionReveal key={exp.id} delay={i * 0.08} className="h-full">
+                                    <div className="bg-card rounded-sm p-8 md:p-10 border border-border hover:border-primary/40 hover:-translate-y-1.5 hover:shadow-xl transition-all duration-400 h-full flex flex-col justify-between group">
+                                        <div>
+                                            <div className="flex items-start justify-between gap-4 mb-6">
+                                                <div className="w-12 h-12 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+                                                    <Tent className="w-6 h-6 text-primary" />
+                                                </div>
+                                                <span className="text-[10px] font-accent font-bold tracking-[0.2em] uppercase border border-primary/20 text-primary bg-primary/5 px-3 py-1 rounded-sm">
+                                                    Official Expedition
+                                                </span>
+                                            </div>
+
+                                            <h3 className="text-2xl font-display font-bold text-foreground group-hover:text-primary transition-colors mb-3 leading-snug">
+                                                {exp.name}
+                                            </h3>
+
+                                            {exp.location && (
+                                                <div className="flex items-center gap-2 mb-4">
+                                                    <MapPin className="w-4 h-4 text-[#C9A84C] flex-shrink-0" />
+                                                    <span className="text-xs font-semibold text-[#C9A84C] tracking-wide">{exp.location}</span>
+                                                </div>
+                                            )}
+
+                                            <p className="text-foreground/65 text-sm leading-relaxed font-light mb-6">
+                                                {exp.description}
+                                            </p>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-border/60 flex items-center justify-between text-xs text-foreground/45 font-light">
+                                            <span className="flex items-center gap-1.5">
+                                                <Compass className="w-3.5 h-3.5 text-primary" /> Wilderness Navigation
+                                            </span>
+                                            {exp.date && (
+                                                <span className="flex items-center gap-1.5 font-medium text-foreground/60">
+                                                    <Calendar className="w-3.5 h-3.5 text-[#C9A84C]" /> {exp.date}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </MotionReveal>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* Gold Residential Projects */}
+            <section className="py-24 md:py-32 px-6 md:px-10 bg-muted/30 border-t border-border">
+                <div className="max-w-7xl mx-auto">
+                    <MotionReveal className="mb-16">
+                        <div className="flex items-center gap-3 mb-4">
+                            <span className="h-px w-8 bg-[#C9A84C]/50" />
+                            <p className="text-[10.5px] font-accent font-bold tracking-[0.28em] uppercase text-[#C9A84C]">Civic Legacy</p>
+                        </div>
+                        <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground tracking-tight">
+                            Gold Residential Projects
+                        </h2>
+                        <p className="text-foreground/60 mt-4 max-w-2xl text-base md:text-lg font-light leading-relaxed">
+                            Tangible, permanent infrastructure and community welfare projects built entirely through student initiative.
+                        </p>
+                    </MotionReveal>
+
+                    {!loading && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {projects.map((proj, i) => (
+                                <MotionReveal key={proj.id} delay={i * 0.08} className="h-full">
+                                    <div className="bg-card rounded-sm p-8 md:p-10 border border-[#C9A84C]/30 hover:border-[#C9A84C] hover:-translate-y-1.5 hover:shadow-xl transition-all duration-400 h-full flex flex-col justify-between group">
+                                        <div>
+                                            <div className="flex items-start justify-between gap-4 mb-6">
+                                                <div className="w-12 h-12 rounded-sm bg-[#C9A84C]/15 border border-[#C9A84C]/30 flex items-center justify-center flex-shrink-0">
+                                                    <Mountain className="w-6 h-6 text-[#C9A84C]" />
+                                                </div>
+                                                <span className="text-[10px] font-accent font-bold tracking-[0.2em] uppercase border border-[#C9A84C]/40 text-[#C9A84C] bg-[#C9A84C]/5 px-3 py-1 rounded-sm">
+                                                    Gold Civic Project
+                                                </span>
+                                            </div>
+
+                                            <h3 className="text-2xl font-display font-bold text-foreground group-hover:text-[#C9A84C] transition-colors mb-3 leading-snug">
+                                                {proj.name}
+                                            </h3>
+
+                                            {proj.location && (
+                                                <div className="flex items-center gap-2 mb-4">
+                                                    <MapPin className="w-4 h-4 text-[#C9A84C] flex-shrink-0" />
+                                                    <span className="text-xs font-semibold text-[#C9A84C] tracking-wide">{proj.location}</span>
+                                                </div>
+                                            )}
+
+                                            <p className="text-foreground/65 text-sm leading-relaxed font-light mb-6">
+                                                {proj.description}
+                                            </p>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-border/60 flex items-center gap-2 text-xs text-[#C9A84C] font-medium">
+                                            <CheckCircle2 className="w-3.5 h-3.5" />
+                                            <span>Completed &amp; Commissioned Community Asset</span>
+                                        </div>
+                                    </div>
+                                </MotionReveal>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* Testimonials from State House Laureates */}
+            <section className="py-24 md:py-32 px-6 md:px-10 bg-[#070b09] text-white border-t border-[#C9A84C]/25">
+                <div className="max-w-7xl mx-auto">
+                    <MotionReveal className="text-center mb-20">
+                        <div className="flex items-center justify-center gap-3 mb-4">
+                            <span className="h-px w-8 bg-[#C9A84C]/50" />
+                            <p className="text-[10.5px] font-accent font-bold tracking-[0.28em] uppercase text-[#C9A84C]">Awardee Testimonies</p>
+                            <span className="h-px w-8 bg-[#C9A84C]/50" />
+                        </div>
+                        <h2 className="text-4xl md:text-5xl font-display font-bold text-white tracking-tight">
+                            Voices of Our State House Laureates
+                        </h2>
+                    </MotionReveal>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {testimonials.map((t, i) => (
+                            <MotionReveal key={i} delay={i * 0.12} className="h-full">
+                                <div className="bg-white/5 rounded-sm p-8 md:p-10 border border-white/10 h-full flex flex-col justify-between hover:border-[#C9A84C]/50 hover:-translate-y-1.5 transition-all duration-400">
+                                    <div>
+                                        <Quote className="w-8 h-8 text-[#C9A84C] mb-6" />
+                                        <p className="text-white/80 leading-relaxed font-light text-sm md:text-base italic mb-8">
+                                            &ldquo;{t.quote}&rdquo;
+                                        </p>
+                                    </div>
+
+                                    <div className="flex items-center gap-3.5 pt-6 border-t border-white/10">
+                                        <div className="w-10 h-10 rounded-sm bg-[#C9A84C]/20 border border-[#C9A84C]/40 flex items-center justify-center font-display font-bold text-[#C9A84C] text-sm">
+                                            {t.initials}
+                                        </div>
+                                        <div>
+                                            <p className="font-display font-bold text-white text-base leading-snug">{t.name}</p>
+                                            <p className="text-[#C9A84C] text-xs font-semibold mt-0.5">{t.role}</p>
+                                            <p className="text-white/40 text-[11px] font-light mt-0.5">{t.credential}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </MotionReveal>
+                        ))}
+                    </div>
+
+                    <div className="text-center mt-16">
+                        <Link
+                            href="/join"
+                            className="inline-flex items-center gap-3 bg-[#C9A84C] hover:bg-[#d8b758] text-[#070b09] font-bold text-[11px] tracking-[0.2em] uppercase px-9 py-4 rounded-sm transition-all duration-300 shadow-xl hover:-translate-y-0.5"
+                        >
+                            <span>Begin Your Award Journey</span>
+                            <ArrowRight className="w-4 h-4" />
+                        </Link>
                     </div>
                 </div>
             </section>
