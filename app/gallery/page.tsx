@@ -230,7 +230,7 @@ export default function GalleryPage() {
                                 {activeSubGroup.images.map((image, index) => {
                                     const displayUrl = toDirectImageUrl(image.image_url)
                                     return (
-                                        <MotionReveal key={image.id} delay={index * 40}>
+                                        <MotionReveal key={image.id} delay={Math.min(index * 20, 200)}>
                                             <div
                                                 className="group relative overflow-hidden rounded-sm aspect-[4/3] bg-[#070b09] border border-border hover:border-[#C9A84C] transition-all duration-400 cursor-pointer shadow-md hover:shadow-2xl hover:-translate-y-1"
                                                 onClick={() => displayUrl && setLightboxIndex(index)}
@@ -254,12 +254,12 @@ export default function GalleryPage() {
                                 {subGroupTiles.map((tile, index) => {
                                     const displayUrl = toDirectImageUrl(tile.coverImage.image_url)
                                     return (
-                                        <MotionReveal key={`${tile.category}::${tile.name}`} delay={index * 60} className="h-full">
+                                        <MotionReveal key={`${tile.category}::${tile.name}`} delay={Math.min(index * 30, 300)} className="h-full">
                                             <div
                                                 className="group relative overflow-hidden rounded-sm aspect-[4/3] bg-[#070b09] border border-border hover:border-[#C9A84C] transition-all duration-500 cursor-pointer shadow-lg hover:shadow-2xl hover:-translate-y-1.5"
                                                 onClick={() => openSubGroup(tile)}
                                             >
-                                                {renderImage(tile.coverImage.image_url, tile.name, true, index < 3, tile.coverImage.focus_point, 'object-cover transition-transform duration-700 group-hover:scale-108')}
+                                                {renderImage(tile.coverImage.image_url, tile.name, true, index < 6, tile.coverImage.focus_point, 'object-cover transition-transform duration-700 group-hover:scale-105')}
 
                                                 {/* Ambient gradient */}
                                                 <div className="absolute inset-0 bg-gradient-to-t from-[#070b09]/95 via-[#070b09]/40 to-transparent transition-opacity duration-300" />
