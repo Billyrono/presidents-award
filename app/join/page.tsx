@@ -123,7 +123,7 @@ export default function JoinPage() {
                             <div className="border border-border rounded-sm p-8 bg-card">
                                 {submitted ? (
                                     <div className="text-center py-10">
-                                        <div className="w-16 h-16 rounded-sm bg-primary/10 flex items-center justify-center mx-auto mb-5">
+                                        <div className="w-16 h-16 rounded-sm border border-primary/30 flex items-center justify-center mx-auto mb-5">
                                             <CheckCircle className="w-8 h-8 text-primary" />
                                         </div>
                                         <h3 className="text-2xl font-display font-bold text-foreground mb-3">Application Received</h3>
@@ -212,7 +212,7 @@ export default function JoinPage() {
                                     const Icon = item.icon
                                     return (
                                         <a key={item.label} href={item.href} className="flex items-start gap-4 p-5 border border-border rounded-sm hover:border-primary/25 hover:bg-primary/3 transition-all group">
-                                            <div className="w-9 h-9 rounded-sm bg-primary/8 flex items-center justify-center flex-shrink-0">
+                                            <div className="w-9 h-9 rounded-sm border border-primary/25 flex items-center justify-center flex-shrink-0">
                                                 <Icon className="w-4 h-4 text-primary" />
                                             </div>
                                             <div>

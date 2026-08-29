@@ -34,6 +34,23 @@ export default function ChroniclesPage() {
             {/* Editorial Lead Section */}
             <section className="py-20 md:py-28 px-6 md:px-10 bg-background">
                 <div className="max-w-7xl mx-auto">
+                    {/* Newspaper Masthead Banner */}
+                    <div className="text-center border-b-2 border-border pb-6 mb-14">
+                        <p className="text-[10px] font-accent font-bold tracking-[0.3em] uppercase text-[#C9A84C] mb-1">
+                            The President&apos;s Award · Kirinyaga University
+                        </p>
+                        <h2 className="font-masthead text-3xl sm:text-4xl md:text-5xl text-foreground tracking-wide select-none drop-shadow-sm my-2">
+                            The Chapter Chronicles
+                        </h2>
+                        <div className="flex items-center justify-center gap-4 text-[11px] text-muted-foreground uppercase font-serif tracking-widest pt-1">
+                            <span>Vol. VIII</span>
+                            <span>·</span>
+                            <span>Official Dispatches, Expeditions &amp; Investitures</span>
+                            <span>·</span>
+                            <span>Continuous Publication</span>
+                        </div>
+                    </div>
+
                     {loading ? (
                         <div className="flex justify-center py-24">
                             <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -70,17 +87,17 @@ export default function ChroniclesPage() {
 
                                             <div className={`${(leadArticle as any).image_url ? 'lg:col-span-5' : 'lg:col-span-12'} space-y-4`}>
                                                 <div className="flex items-center gap-3">
-                                                    <span className="text-[10px] font-accent font-bold tracking-[0.2em] uppercase text-[#C9A84C] border border-[#C9A84C]/30 px-2.5 py-0.5 rounded-sm bg-[#C9A84C]/5">
+                                                    <span className="text-[10px] font-accent font-bold tracking-[0.2em] uppercase text-[#C9A84C] border border-[#C9A84C]/40 px-2.5 py-0.5 rounded-sm">
                                                         {leadArticle.category || 'Gazette'}
                                                     </span>
                                                     <span className="text-xs text-muted-foreground font-mono">{leadArticle.date}</span>
                                                 </div>
 
-                                                <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground group-hover:text-primary transition-colors leading-tight">
+                                                <h2 className="text-3xl md:text-4xl lg:text-[2.75rem] font-masthead font-normal text-foreground group-hover:text-primary transition-colors leading-[1.2] drop-shadow-sm">
                                                     {leadArticle.title}
                                                 </h2>
 
-                                                <p className="text-foreground/65 text-base font-light leading-relaxed">
+                                                <p className="text-foreground/70 text-base font-serif italic leading-relaxed">
                                                     {leadArticle.description}
                                                 </p>
 
@@ -127,11 +144,11 @@ export default function ChroniclesPage() {
                                                             <span className="text-muted-foreground font-mono text-[11px]">{item.date}</span>
                                                         </div>
 
-                                                        <h3 className="text-xl font-display font-bold text-foreground group-hover:text-primary transition-colors mb-3 leading-snug">
+                                                        <h3 className="text-2xl font-masthead font-normal text-foreground group-hover:text-primary transition-colors mb-3 leading-snug">
                                                             {item.title}
                                                         </h3>
 
-                                                        <p className="text-foreground/60 text-sm font-light leading-relaxed line-clamp-3">
+                                                        <p className="text-foreground/60 text-sm font-serif italic leading-relaxed line-clamp-3">
                                                             {item.description}
                                                         </p>
                                                     </div>

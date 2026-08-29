@@ -15,8 +15,9 @@ const config: Config = {
 			fontFamily: {
 				'display': ['Playfair Display', 'Georgia', 'serif'],
 				'sans': ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
-				'serif': ['Playfair Display', 'Georgia', 'serif'],
+				'serif': ['Newsreader', 'Playfair Display', 'Georgia', 'serif'],
 				'accent': ['Cinzel', 'Playfair Display', 'serif'],
+				'masthead': ['Chomsky', 'Cloister Black', 'Engravers Old English BT', 'UnifrakturMaguntia', 'Cinzel', 'serif'],
 			},
 			colors: {
 				background: 'hsl(var(--background))',

@@ -59,11 +59,11 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
 
     return (
         <>
-            {/* High-End Dark Gazette Hero */}
-            <section className="relative bg-[#070b09] text-white pt-24 pb-20 md:pt-32 md:pb-28 px-6 md:px-10 overflow-hidden border-b border-[#C9A84C]/25">
+            {/* Editorial Article Hero — NYT Gazette Style */}
+            <section className="relative bg-[#070b09] text-white pt-24 pb-16 md:pt-32 md:pb-24 px-6 md:px-10 overflow-hidden border-b border-[#C9A84C]/25">
                 <div className="absolute inset-0 z-0">
                     <div
-                        className="absolute inset-0 opacity-[0.03]"
+                        className="absolute inset-0 opacity-[0.02]"
                         style={{
                             backgroundImage: 'radial-gradient(circle, #C9A84C 1px, transparent 1px)',
                             backgroundSize: '28px 28px',
@@ -72,56 +72,60 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[#C9A84C]/5 rounded-full blur-3xl" />
                 </div>
 
-                <div className="relative z-10 max-w-4xl mx-auto">
-                    {/* Return link */}
-                    <Link
-                        href="/news"
-                        className="inline-flex items-center gap-2 text-xs font-accent font-bold tracking-[0.2em] uppercase text-[#C9A84C] hover:text-white transition-colors mb-8 group"
-                    >
-                        <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
-                        <span>All Chronicles</span>
-                    </Link>
-
-                    {/* Meta Bar */}
-                    <div className="flex flex-wrap items-center gap-3 mb-6">
-                        <span className="text-[10px] font-accent font-bold tracking-[0.2em] uppercase border border-[#C9A84C]/40 text-[#C9A84C] bg-[#C9A84C]/10 px-3 py-1 rounded-sm">
-                            {article.category || 'Gazette'}
+                <div className="relative z-10 max-w-4xl mx-auto text-center">
+                    {/* Navigation */}
+                    <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-8">
+                        <Link
+                            href="/news"
+                            className="inline-flex items-center gap-2 text-xs font-accent font-bold tracking-[0.2em] uppercase text-[#C9A84C] hover:text-white transition-colors group"
+                        >
+                            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
+                            <span>Return to Gazette</span>
+                        </Link>
+                        <span className="text-[10px] font-accent font-bold tracking-[0.25em] uppercase text-white/40">
+                            Kirinyaga Chapter Dispatch
                         </span>
-                        <div className="flex items-center gap-4 text-white/50 text-xs font-mono">
-                            <span className="flex items-center gap-1.5">
-                                <Calendar className="w-3.5 h-3.5 text-[#C9A84C]" /> {article.date}
-                            </span>
-                            <span>·</span>
-                            <span className="flex items-center gap-1.5">
-                                <Clock className="w-3.5 h-3.5 text-[#C9A84C]" /> {readTime} min read
-                            </span>
-                        </div>
                     </div>
 
-                    {/* Headline */}
-                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6 leading-[1.15] tracking-tight">
+                    {/* Classic NYT-Style Masthead Banner */}
+                    <div className="mb-6">
+                        <p className="font-masthead text-lg sm:text-xl md:text-2xl text-[#C9A84C] tracking-wide select-none drop-shadow-sm">
+                            The Chapter Gazette
+                        </p>
+                        <div className="flex items-center justify-center gap-3 mt-1 text-[9.5px] font-accent font-bold tracking-[0.22em] uppercase text-white/40">
+                            <span>Vol. {new Date().getFullYear() - 2017}</span>
+                            <span>·</span>
+                            <span>{article.category || 'Official Record'}</span>
+                            <span>·</span>
+                            <span>{article.date}</span>
+                        </div>
+                        <div className="h-[1px] bg-gradient-to-r from-transparent via-[#C9A84C]/35 to-transparent mt-3" />
+                    </div>
+
+                    {/* Article Headline — Chomsky / Old English / Cloister Black style */}
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-masthead font-normal text-white mb-6 leading-[1.18] tracking-normal max-w-3xl mx-auto drop-shadow-md">
                         {article.title}
                     </h1>
 
-                    {/* Standfirst / Summary */}
+                    {/* Standfirst / Summary (Deck) */}
                     {article.description && (
-                        <p className="text-lg md:text-xl text-white/75 leading-relaxed font-light max-w-3xl mb-8">
+                        <p className="text-lg md:text-xl text-white/70 leading-relaxed font-serif italic max-w-2xl mx-auto mb-8">
                             {article.description}
                         </p>
                     )}
 
-                    {/* Byline */}
-                    {article.published_by && (
-                        <div className="flex items-center gap-3.5 pt-6 border-t border-white/10">
-                            <div className="w-10 h-10 rounded-sm bg-[#C9A84C]/20 border border-[#C9A84C]/40 flex items-center justify-center text-[#C9A84C] font-display font-bold text-sm">
-                                {article.published_by.charAt(0)}
-                            </div>
-                            <div>
-                                <p className="text-white font-medium text-sm leading-snug">{article.published_by}</p>
-                                <p className="text-white/40 text-[11px] font-light">Official Chapter Gazette</p>
-                            </div>
+                    {/* Framed Editorial Byline Bar */}
+                    <div className="border-y border-white/10 py-3.5 max-w-xl mx-auto flex items-center justify-between text-xs text-white/60 font-serif">
+                        <div className="flex items-center gap-2">
+                            <span className="text-white/40 uppercase tracking-widest text-[10px] font-sans font-bold">By</span>
+                            <span className="text-white font-medium">{article.published_by || 'Secretariat Staff'}</span>
                         </div>
-                    )}
+                        <div className="flex items-center gap-3 text-white/45 text-[11px] font-sans font-medium uppercase tracking-wider">
+                            <span>{article.date}</span>
+                            <span>·</span>
+                            <span>{readTime} min read</span>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -153,23 +157,23 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                 </section>
             )}
 
-            {/* Article Content */}
+            {/* Article Content — NYT Editorial Typesetting */}
             <section className="py-20 px-6 md:px-10 bg-background">
                 <div className="max-w-3xl mx-auto">
-                    <article className="space-y-6 text-foreground/80 leading-[1.85] text-base md:text-lg font-light">
+                    <article className="space-y-6 text-foreground/85 leading-[1.9] text-base md:text-lg font-serif font-normal">
                         <ReactMarkdown
                             components={{
                                 h1: ({ children }) => (
-                                    <h1 className="text-3xl font-display font-bold text-foreground mt-12 mb-6 tracking-tight">{children}</h1>
+                                    <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mt-12 mb-6 tracking-tight border-b border-border pb-2">{children}</h1>
                                 ),
                                 h2: ({ children }) => (
-                                    <h2 className="text-2xl font-display font-bold text-foreground mt-12 mb-4 tracking-tight">{children}</h2>
+                                    <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mt-12 mb-4 tracking-tight">{children}</h2>
                                 ),
                                 h3: ({ children }) => (
-                                    <h3 className="text-xl font-display font-bold text-foreground mt-10 mb-4 tracking-tight">{children}</h3>
+                                    <h3 className="text-lg md:text-xl font-display font-bold text-foreground mt-10 mb-4 tracking-tight">{children}</h3>
                                 ),
                                 p: ({ children }) => (
-                                    <p className="text-foreground/80 leading-[1.85] text-base md:text-lg mb-6 font-light">{children}</p>
+                                    <p className="text-foreground/85 leading-[1.9] text-base md:text-lg mb-6 font-serif">{children}</p>
                                 ),
                                 strong: ({ children }) => (
                                     <strong className="font-semibold text-foreground">{children}</strong>
@@ -178,13 +182,13 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                                     <em className="italic text-foreground/90 font-serif">{children}</em>
                                 ),
                                 ul: ({ children }) => (
-                                    <ul className="list-disc pl-6 mb-6 space-y-2 text-foreground/80 font-light">{children}</ul>
+                                    <ul className="list-disc pl-6 mb-6 space-y-2 text-foreground/80 font-serif">{children}</ul>
                                 ),
                                 ol: ({ children }) => (
-                                    <ol className="list-decimal pl-6 mb-6 space-y-2 text-foreground/80 font-light">{children}</ol>
+                                    <ol className="list-decimal pl-6 mb-6 space-y-2 text-foreground/80 font-serif">{children}</ol>
                                 ),
                                 blockquote: ({ children }) => (
-                                    <blockquote className="border-l-2 border-[#C9A84C] pl-6 my-8 italic font-serif text-foreground/90 text-lg md:text-xl">
+                                    <blockquote className="border-l-2 border-[#C9A84C] pl-6 my-8 italic font-serif text-foreground text-xl md:text-2xl leading-relaxed">
                                         {children}
                                     </blockquote>
                                 ),

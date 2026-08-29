@@ -78,7 +78,7 @@ export default function AchievementsPage() {
                             </p>
                         </div>
                         <div className="lg:col-span-4 flex lg:justify-end">
-                            <div className="p-6 rounded-sm bg-white/5 border border-[#C9A84C]/40 text-center w-full max-w-xs">
+                            <div className="p-6 rounded-sm border border-[#C9A84C]/40 text-center w-full max-w-xs">
                                 <Award className="w-8 h-8 text-[#C9A84C] mx-auto mb-2" />
                                 <div className="text-4xl font-display font-bold text-[#C9A84C] mb-1">
                                     <Counter to={20} suffix="+" duration={2.2} />
