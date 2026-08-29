@@ -63,13 +63,13 @@ export function CustomFooter() {
                     {/* Column 1: Chapter Crest & Ethos (4 cols) */}
                     <div className="lg:col-span-4 space-y-6">
                         <Link href="/" className="inline-flex items-center gap-4 group">
-                            <div className="relative w-12 h-12 rounded-sm overflow-hidden bg-white/5 border border-white/10 p-1 flex items-center justify-center">
+                            <div className="relative w-14 h-14 flex items-center justify-center flex-shrink-0">
                                 <Image
                                     src="/Logo/PA Logo Dark.svg"
                                     alt="President's Award Crest"
-                                    width={40}
-                                    height={40}
-                                    className="w-10 h-10 object-contain"
+                                    width={52}
+                                    height={52}
+                                    className="w-[52px] h-[52px] object-contain"
                                 />
                             </div>
                             <div>
@@ -106,7 +106,7 @@ export function CustomFooter() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         title={s.label}
-                                        className="w-9 h-9 border border-white/10 rounded-sm flex items-center justify-center text-white/50 hover:text-[#C9A84C] hover:border-[#C9A84C]/50 hover:bg-[#C9A84C]/5 transition-all duration-300"
+                                        className="w-9 h-9 border border-white/15 rounded-sm flex items-center justify-center text-white/50 hover:text-[#C9A84C] hover:border-[#C9A84C]/40 transition-all duration-300"
                                     >
                                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">{s.svg}</svg>
                                     </a>

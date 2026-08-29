@@ -95,7 +95,7 @@ export default function AboutPage() {
                             return (
                                 <MotionReveal key={i} delay={i * 0.08}>
                                     <div className="bg-card rounded-sm p-7 border border-border hover:border-primary/25 hover:-translate-y-1.5 hover:shadow-lg transition-all duration-400 h-full">
-                                        <div className="w-10 h-10 rounded-sm bg-primary/8 flex items-center justify-center mb-5">
+                                        <div className="w-10 h-10 rounded-sm border border-primary/25 flex items-center justify-center mb-5">
                                             <Icon className="w-5 h-5 text-primary" />
                                         </div>
                                         <h3 className="text-lg font-display font-bold text-foreground mb-3">{value.title}</h3>

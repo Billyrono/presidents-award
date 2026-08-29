@@ -1,10 +1,17 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+export const dynamic = 'force-dynamic'
+
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
 const ADMIN_EMAIL = process.env.RESEND_ADMIN_EMAIL || 'billyrono76@gmail.com'
 const DOMAIN_VERIFIED = FROM_EMAIL !== 'onboarding@resend.dev'
+
+function getResend() {
+    const apiKey = process.env.RESEND_API_KEY
+    if (!apiKey) return null
+    return new Resend(apiKey)
+}
 
 function applicantHtml(name: string) {
     return `<!DOCTYPE html>
@@ -92,6 +99,12 @@ export async function POST(request: Request) {
     try {
         const body = await request.json()
         const { type, name, email, phone, faculty, year, interests, message } = body
+        const resend = getResend()
+
+        if (!resend) {
+            console.warn('RESEND_API_KEY is not configured; skipping email dispatch.')
+            return NextResponse.json({ success: true, note: 'Resend API key not configured' })
+        }
 
         if (type === 'application') {
             const tasks: Promise<unknown>[] = [

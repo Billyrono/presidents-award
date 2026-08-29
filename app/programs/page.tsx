@@ -161,7 +161,7 @@ export default function ProgramsPage() {
             <section className="bg-[#0c120e] text-white py-12 px-6 md:px-10 border-b border-[#C9A84C]/20">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-sm bg-[#C9A84C]/10 border border-[#C9A84C]/30 flex items-center justify-center flex-shrink-0">
+                        <div className="w-12 h-12 rounded-sm border border-[#C9A84C]/40 flex items-center justify-center flex-shrink-0">
                             <Award className="w-6 h-6 text-[#C9A84C]" />
                         </div>
                         <div>
@@ -208,19 +208,19 @@ export default function ProgramsPage() {
                                     }`}
                                 >
                                     {tier.featured && (
-                                        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                                            <span className="bg-[#C9A84C] text-[#070b09] text-[9.5px] font-accent font-bold tracking-[0.25em] uppercase px-5 py-1 shadow-md">
+                                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+                                            <span className="bg-[#C9A84C] text-[#070b09] text-[9px] font-accent font-bold tracking-[0.25em] uppercase px-5 py-1.5 shadow-md whitespace-nowrap">
                                                 Presented at State House
                                             </span>
                                         </div>
                                     )}
 
-                                    <div>
-                                        <div className="flex items-center justify-between mb-4">
-                                            <span className={`text-[10px] font-accent font-bold tracking-[0.2em] uppercase border px-3 py-1 rounded-sm ${tier.badgeBg}`}>
+                                    <div className={tier.featured ? 'pt-4' : ''}>
+                                        <div className="flex items-center justify-between mb-4 gap-3">
+                                            <span className={`text-[10px] font-accent font-bold tracking-[0.2em] uppercase border px-3 py-1 rounded-sm whitespace-nowrap ${tier.badgeBg}`}>
                                                 {tier.roman}
                                             </span>
-                                            <span className={`text-xs font-semibold tracking-wider uppercase ${tier.featured ? 'text-white/40' : 'text-foreground/40'}`}>
+                                            <span className={`text-xs font-semibold tracking-wider uppercase whitespace-nowrap ${tier.featured ? 'text-white/40' : 'text-foreground/40'}`}>
                                                 {tier.duration}
                                             </span>
                                         </div>
@@ -313,7 +313,7 @@ export default function ProgramsPage() {
                                             {/* Column A: Number & Icon */}
                                             <div className="lg:col-span-3 flex lg:flex-col items-center lg:items-start justify-between lg:justify-start gap-4">
                                                 <div className="flex items-center gap-4">
-                                                    <div className={`w-14 h-14 rounded-sm flex items-center justify-center ${pillar.goldOnly ? 'bg-[#C9A84C]/20 border border-[#C9A84C]/40' : 'bg-primary/10 border border-primary/20'}`}>
+                                                    <div className={`w-14 h-14 rounded-sm flex items-center justify-center border ${pillar.goldOnly ? 'border-[#C9A84C]/50' : 'border-primary/30'}`}>
                                                         <Icon className={`w-7 h-7 ${pillar.goldOnly ? 'text-[#C9A84C]' : 'text-primary'}`} />
                                                     </div>
                                                     <span className={`text-4xl md:text-5xl font-display font-bold leading-none ${pillar.goldOnly ? 'text-[#C9A84C]' : 'text-foreground/20'}`}>
@@ -324,8 +324,8 @@ export default function ProgramsPage() {
                                                 <div className="lg:mt-4">
                                                     <span className={`inline-block text-[10px] font-accent font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-sm ${
                                                         pillar.goldOnly
-                                                            ? 'bg-[#C9A84C]/15 text-[#C9A84C] border border-[#C9A84C]/30'
-                                                            : 'bg-muted text-foreground/70 border border-border'
+                                                            ? 'text-[#C9A84C] border border-[#C9A84C]/40'
+                                                            : 'text-foreground/70 border border-border'
                                                     }`}>
                                                         {pillar.commitment}
                                                     </span>

@@ -182,7 +182,7 @@ export function Hero() {
           </Link>
           <Link
             href="/programs"
-            className="inline-flex items-center justify-center gap-2 border border-white/30 text-white/90 hover:bg-white/10 hover:border-[#C9A84C] text-[11px] font-accent font-bold tracking-[0.2em] uppercase px-7 py-3.5 rounded-sm transition-all duration-300 whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 border border-white/75 text-white/90 hover:bg-white/10 hover:border-[#C9A84C] text-[11px] font-accent font-bold tracking-[0.2em] uppercase px-7 py-3.5 rounded-sm transition-all duration-300 whitespace-nowrap"
           >
             Explore The Programme
           </Link>
