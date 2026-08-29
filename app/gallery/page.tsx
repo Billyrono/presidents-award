@@ -355,7 +355,7 @@ export default function GalleryPage() {
                                 {subGroupTiles.map((tile, index) => {
                                     const displayUrl = toDirectImageUrl(tile.coverImage.image_url)
                                     return (
-                                        <MotionReveal key={`${tile.category}::${tile.name}`} delay={index < 3 ? 0 : Math.min((Math.floor(index / 3)) * 80, 300)} className="h-full">
+                                        <MotionReveal key={`${tile.category}::${tile.name}`} delay={index < 3 ? 0 : Math.min((Math.floor(index / 3)) * 80, 300)} className="h-full" showSkeleton>
                                             <div
                                                 className="group relative overflow-hidden rounded-sm aspect-[4/3] bg-[#070b09] border border-border hover:border-[#C9A84C] transition-all duration-500 cursor-pointer shadow-lg hover:shadow-2xl hover:-translate-y-1.5"
                                                 onClick={() => openSubGroup(tile)}
