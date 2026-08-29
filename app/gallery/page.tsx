@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import { PageHero } from '@/components/page-hero'
 import { MotionReveal } from '@/components/motion-reveal'
-import { getGallery, toDirectImageUrl } from '@/lib/content'
+import { getGallery, toDirectImageUrl, toSizedImageUrl } from '@/lib/content'
 import type { GalleryImage as GalleryImageType } from '@/lib/types'
 import { X, ChevronLeft, ChevronRight, ArrowLeft, Camera, Sparkles, Layers } from 'lucide-react'
 
@@ -101,18 +101,29 @@ export default function GalleryPage() {
         return () => window.removeEventListener('keydown', handler)
     }, [lightboxIndex, closeLightbox, goPrev, goNext])
 
+    // Lock body scroll when lightbox is open
+    useEffect(() => {
+        if (lightboxIndex !== null) {
+            document.body.style.overflow = 'hidden'
+            return () => { document.body.style.overflow = '' }
+        }
+    }, [lightboxIndex])
+
     const lightboxImage = activeSubGroup && lightboxIndex !== null ? activeSubGroup.images[lightboxIndex] : null
 
-    const renderImage = (url: string | null, alt: string, fill: boolean, priority: boolean = false, focusPoint?: number, className?: string) => {
+    const renderImage = (url: string | null, alt: string, fill: boolean, priority: boolean = false, focusPoint?: number, className?: string, imageWidth: number = 600) => {
         if (!url) return null
+        // Use sized URL for optimized loading (smaller tiles = smaller downloads)
+        const sizedUrl = toSizedImageUrl(url, imageWidth)
         const directUrl = toDirectImageUrl(url)
-        if (!directUrl) return null
+        if (!sizedUrl && !directUrl) return null
+        const src = sizedUrl || directUrl!
 
-        if (isExternal(directUrl)) {
+        if (isExternal(src)) {
             return (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                    src={directUrl}
+                    src={src}
                     alt={alt}
                     className={className || 'w-full h-full object-cover'}
                     style={focusPoint !== undefined ? { objectPosition: `center ${focusPoint}%` } : undefined}
@@ -124,7 +135,7 @@ export default function GalleryPage() {
         if (fill) {
             return (
                 <Image
-                    src={directUrl}
+                    src={src}
                     alt={alt}
                     fill
                     className={className || 'object-cover'}
@@ -138,10 +149,10 @@ export default function GalleryPage() {
 
         return (
             <Image
-                src={directUrl}
+                src={src}
                 alt={alt}
-                width={800}
-                height={600}
+                width={imageWidth}
+                height={Math.round(imageWidth * 0.75)}
                 className={className || 'w-full h-full object-cover'}
                 style={focusPoint !== undefined ? { objectPosition: `center ${focusPoint}%` } : undefined}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -195,57 +206,129 @@ export default function GalleryPage() {
                             <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                         </div>
                     ) : activeSubGroup ? (
-                        /* ═══════ LEVEL 2: Sub-group images ═══════ */
+                        /* ═══════ LEVEL 2: Sub-group — Curatorial Exhibition View ═══════ */
                         <div>
-                            {/* Breadcrumb Header */}
-                            <div className="mb-12 pb-6 border-b border-border">
+                            {/* Exhibition Header */}
+                            <div className="mb-16 pb-8 border-b border-border">
                                 <button
                                     onClick={backToTiles}
-                                    className="inline-flex items-center gap-2 text-xs font-accent font-bold tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors mb-4 group"
+                                    className="inline-flex items-center gap-2.5 text-xs font-accent font-bold tracking-widest uppercase text-muted-foreground hover:text-primary transition-colors mb-6 group"
                                 >
-                                    <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                                    <span>Back to Archive</span>
+                                    <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1.5 transition-transform duration-300" />
+                                    <span>Return to Archive</span>
                                 </button>
-                                <div className="flex items-center gap-3 mb-2">
-                                    <span className="h-px w-6 bg-[#C9A84C]/60" />
-                                    <span className="text-[10px] font-accent font-bold tracking-[0.25em] uppercase text-[#C9A84C]">
+
+                                <div className="flex items-center gap-3 mb-3">
+                                    <span className="h-px w-8 bg-[#C9A84C]/60" />
+                                    <span className="text-[10px] font-accent font-bold tracking-[0.3em] uppercase text-[#C9A84C]">
                                         {activeSubGroup.category}
                                     </span>
                                 </div>
-                                <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground tracking-tight">
+                                <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground tracking-tight leading-tight">
                                     {activeSubGroup.name}
                                 </h2>
                                 {activeSubGroup.coverImage.description && (
-                                    <p className="text-foreground/60 text-sm md:text-base font-light mt-3 max-w-3xl leading-relaxed">
+                                    <p className="text-foreground/55 text-base md:text-lg font-light mt-5 max-w-3xl leading-relaxed">
                                         {activeSubGroup.coverImage.description}
                                     </p>
                                 )}
-                                <p className="text-xs text-muted-foreground mt-3 font-mono">
-                                    {activeSubGroup.images.length} Archival Photograph{activeSubGroup.images.length !== 1 ? 's' : ''}
-                                </p>
+                                <div className="flex items-center gap-4 mt-5">
+                                    <span className="inline-flex items-center gap-1.5 text-[10px] font-accent font-bold tracking-[0.2em] uppercase text-muted-foreground">
+                                        <Camera className="w-3.5 h-3.5" />
+                                        {activeSubGroup.images.length} Photograph{activeSubGroup.images.length !== 1 ? 's' : ''}
+                                    </span>
+                                </div>
                             </div>
 
-                            {/* Images Grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                                {activeSubGroup.images.map((image, index) => {
-                                    const displayUrl = toDirectImageUrl(image.image_url)
-                                    return (
-                                        <MotionReveal key={image.id} delay={Math.min(index * 20, 200)}>
+                            {/* Magazine Layout — Lead hero + grid */}
+                            {activeSubGroup.images.length === 1 ? (
+                                /* Single image — full-width showcase */
+                                <MotionReveal>
+                                    <div
+                                        className="group relative overflow-hidden rounded-sm aspect-[16/9] bg-[#070b09] border border-border hover:border-[#C9A84C] transition-all duration-500 cursor-pointer shadow-xl"
+                                        onClick={() => setLightboxIndex(0)}
+                                    >
+                                        {renderImage(activeSubGroup.images[0].image_url, activeSubGroup.images[0].title, true, true, activeSubGroup.images[0].focus_point, 'object-cover transition-transform duration-700 group-hover:scale-[1.03]', 1000)}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-[#070b09]/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+                                        <div className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            <span className="inline-flex items-center gap-2 bg-[#070b09]/80 backdrop-blur-sm text-white text-[10px] font-accent font-bold tracking-[0.2em] uppercase px-4 py-2 rounded-sm border border-[#C9A84C]/30">
+                                                <Sparkles className="w-3.5 h-3.5 text-[#C9A84C]" /> View Full Size
+                                            </span>
+                                        </div>
+                                    </div>
+                                </MotionReveal>
+                            ) : activeSubGroup.images.length === 2 ? (
+                                /* Two images — side by side */
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {activeSubGroup.images.map((image, index) => (
+                                        <MotionReveal key={image.id} delay={index * 80}>
                                             <div
-                                                className="group relative overflow-hidden rounded-sm aspect-[4/3] bg-[#070b09] border border-border hover:border-[#C9A84C] transition-all duration-400 cursor-pointer shadow-md hover:shadow-2xl hover:-translate-y-1"
-                                                onClick={() => displayUrl && setLightboxIndex(index)}
+                                                className="group relative overflow-hidden rounded-sm aspect-[4/3] bg-[#070b09] border border-border hover:border-[#C9A84C] transition-all duration-500 cursor-pointer shadow-lg hover:shadow-2xl hover:-translate-y-1"
+                                                onClick={() => setLightboxIndex(index)}
                                             >
-                                                {renderImage(image.image_url, image.title, true, index < 4, image.focus_point, 'object-cover transition-transform duration-700 group-hover:scale-105')}
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                                                    <span className="text-white text-xs font-accent font-bold tracking-wider uppercase flex items-center gap-1.5">
-                                                        <Sparkles className="w-3.5 h-3.5 text-[#C9A84C]" /> Inspect
+                                                {renderImage(image.image_url, image.title, true, true, image.focus_point, 'object-cover transition-transform duration-700 group-hover:scale-[1.04]', 800)}
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070b09]/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+                                                <div className="absolute bottom-5 left-5 right-5 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                                                    <p className="text-white text-sm font-display font-bold">{image.title}</p>
+                                                    <span className="inline-flex items-center gap-1.5 mt-2 text-[#C9A84C] text-[10px] font-accent font-bold tracking-[0.18em] uppercase">
+                                                        <Sparkles className="w-3 h-3" /> Inspect
                                                     </span>
                                                 </div>
                                             </div>
                                         </MotionReveal>
-                                    )
-                                })}
-                            </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                /* 3+ images — Lead hero image + staggered grid */
+                                <div className="space-y-6">
+                                    {/* Lead Image — cinematic widescreen */}
+                                    <MotionReveal>
+                                        <div
+                                            className="group relative overflow-hidden rounded-sm aspect-[21/9] md:aspect-[2.4/1] bg-[#070b09] border border-border hover:border-[#C9A84C] transition-all duration-500 cursor-pointer shadow-xl"
+                                            onClick={() => setLightboxIndex(0)}
+                                        >
+                                            {renderImage(activeSubGroup.images[0].image_url, activeSubGroup.images[0].title, true, true, activeSubGroup.images[0].focus_point, 'object-cover transition-transform duration-700 group-hover:scale-[1.03]', 1200)}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-[#070b09]/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+                                            <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                                                <div>
+                                                    <p className="text-white font-display font-bold text-lg md:text-xl">{activeSubGroup.images[0].title}</p>
+                                                    {activeSubGroup.images[0].description && (
+                                                        <p className="text-white/60 text-sm font-light mt-1 max-w-lg line-clamp-1">{activeSubGroup.images[0].description}</p>
+                                                    )}
+                                                </div>
+                                                <span className="inline-flex items-center gap-2 bg-[#070b09]/80 backdrop-blur-sm text-white text-[10px] font-accent font-bold tracking-[0.2em] uppercase px-4 py-2 rounded-sm border border-[#C9A84C]/30 flex-shrink-0">
+                                                    <Sparkles className="w-3.5 h-3.5 text-[#C9A84C]" /> View
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </MotionReveal>
+
+                                    {/* Remaining images — elegant masonry-ish grid */}
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                                        {activeSubGroup.images.slice(1).map((image, index) => (
+                                            <MotionReveal key={image.id} delay={Math.min((index + 1) * 40, 300)}>
+                                                <div
+                                                    className={`group relative overflow-hidden rounded-sm bg-[#070b09] border border-border hover:border-[#C9A84C] transition-all duration-500 cursor-pointer shadow-lg hover:shadow-2xl hover:-translate-y-1 ${
+                                                        index === 0 && activeSubGroup.images.length > 3
+                                                            ? 'aspect-[4/5] md:row-span-2'
+                                                            : 'aspect-[4/3]'
+                                                    }`}
+                                                    onClick={() => setLightboxIndex(index + 1)}
+                                                >
+                                                    {renderImage(image.image_url, image.title, true, index < 3, image.focus_point, 'object-cover transition-transform duration-700 group-hover:scale-[1.05]', 600)}
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-[#070b09]/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+                                                    <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                                                        <p className="text-white text-sm font-display font-bold line-clamp-1">{image.title}</p>
+                                                        <span className="inline-flex items-center gap-1.5 mt-1.5 text-[#C9A84C] text-[10px] font-accent font-bold tracking-[0.18em] uppercase">
+                                                            <Sparkles className="w-3 h-3" /> Inspect
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </MotionReveal>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     ) : (
                         /* ═══════ LEVEL 1: Sub-group Collection Tiles ═══════ */
@@ -259,7 +342,7 @@ export default function GalleryPage() {
                                                 className="group relative overflow-hidden rounded-sm aspect-[4/3] bg-[#070b09] border border-border hover:border-[#C9A84C] transition-all duration-500 cursor-pointer shadow-lg hover:shadow-2xl hover:-translate-y-1.5"
                                                 onClick={() => openSubGroup(tile)}
                                             >
-                                                {renderImage(tile.coverImage.image_url, tile.name, true, index < 6, tile.coverImage.focus_point, 'object-cover transition-transform duration-700 group-hover:scale-105')}
+                                                {renderImage(tile.coverImage.image_url, tile.name, true, index < 6, tile.coverImage.focus_point, 'object-cover transition-transform duration-700 group-hover:scale-105', 500)}
 
                                                 {/* Ambient gradient */}
                                                 <div className="absolute inset-0 bg-gradient-to-t from-[#070b09]/95 via-[#070b09]/40 to-transparent transition-opacity duration-300" />
@@ -306,100 +389,112 @@ export default function GalleryPage() {
                 </div>
             </section>
 
-            {/* ───── Full-Screen Dark Luxury Lightbox ───── */}
+            {/* ───── Premium Full-Screen Lightbox ───── */}
             {lightboxImage && (() => {
                 const lightboxUrl = toDirectImageUrl(lightboxImage.image_url)
+                const totalImages = activeSubGroup?.images.length ?? 0
+                const currentNum = (lightboxIndex ?? 0) + 1
+
                 return (
                     <div
-                        className="fixed inset-0 bg-[#070b09]/95 z-50 flex items-center justify-center backdrop-blur-md"
-                        onClick={closeLightbox}
+                        className="fixed inset-0 z-[60] flex flex-col"
+                        style={{ backgroundColor: 'rgba(7, 11, 9, 0.97)' }}
                     >
-                        {/* Header */}
-                        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-8 py-6 z-20 border-b border-white/10 bg-[#070b09]/80 backdrop-blur-md">
-                            <div>
-                                <span className="text-[#C9A84C] text-[10px] font-accent font-bold tracking-[0.25em] uppercase">
+                        {/* ── Top Bar ── */}
+                        <div className="flex items-center justify-between px-6 md:px-10 py-4 md:py-5 border-b border-white/8 bg-[#070b09]/60 backdrop-blur-xl flex-shrink-0 z-10">
+                            <div className="min-w-0">
+                                <span className="text-[#C9A84C] text-[9px] md:text-[10px] font-accent font-bold tracking-[0.3em] uppercase block">
                                     {activeSubGroup?.category}
                                 </span>
-                                <h3 className="text-white font-display font-bold text-xl">{activeSubGroup?.name}</h3>
+                                <h3 className="text-white font-display font-bold text-base md:text-lg truncate mt-0.5">
+                                    {activeSubGroup?.name}
+                                </h3>
                             </div>
-                            <div className="flex items-center gap-6">
-                                {activeSubGroup && (
-                                    <span className="text-white/60 text-xs font-mono tracking-widest">
-                                        {(lightboxIndex ?? 0) + 1} / {activeSubGroup.images.length}
-                                    </span>
-                                )}
-                                <button className="p-2 text-white/70 hover:text-[#C9A84C] transition-colors" onClick={closeLightbox}>
-                                    <X className="w-6 h-6" />
+                            <div className="flex items-center gap-5 flex-shrink-0">
+                                <span className="text-white/40 text-[11px] font-accent font-bold tracking-[0.2em] uppercase">
+                                    {currentNum} <span className="text-white/20">of</span> {totalImages}
+                                </span>
+                                <button
+                                    className="p-2.5 rounded-sm text-white/60 hover:text-white hover:bg-white/5 transition-all duration-200"
+                                    onClick={closeLightbox}
+                                    aria-label="Close lightbox"
+                                >
+                                    <X className="w-5 h-5" />
                                 </button>
                             </div>
                         </div>
 
-                        {/* Prev */}
-                        {lightboxIndex !== null && lightboxIndex > 0 && (
-                            <button
-                                className="absolute left-6 top-1/2 -translate-y-1/2 p-3 bg-white/5 hover:bg-[#C9A84C] hover:text-[#070b09] rounded-sm text-white transition-all duration-300 z-20 border border-white/10"
-                                onClick={(e) => { e.stopPropagation(); goPrev() }}
-                            >
-                                <ChevronLeft className="w-6 h-6" />
-                            </button>
-                        )}
+                        {/* ── Main Image Area ── */}
+                        <div className="flex-1 relative flex items-center justify-center overflow-hidden min-h-0">
+                            {/* Navigation Arrows */}
+                            {lightboxIndex !== null && lightboxIndex > 0 && (
+                                <button
+                                    className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full bg-white/5 hover:bg-[#C9A84C] text-white/70 hover:text-[#070b09] transition-all duration-300 border border-white/10 hover:border-[#C9A84C] backdrop-blur-sm"
+                                    onClick={goPrev}
+                                    aria-label="Previous image"
+                                >
+                                    <ChevronLeft className="w-6 h-6" />
+                                </button>
+                            )}
+                            {lightboxIndex !== null && activeSubGroup && lightboxIndex < activeSubGroup.images.length - 1 && (
+                                <button
+                                    className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full bg-white/5 hover:bg-[#C9A84C] text-white/70 hover:text-[#070b09] transition-all duration-300 border border-white/10 hover:border-[#C9A84C] backdrop-blur-sm"
+                                    onClick={goNext}
+                                    aria-label="Next image"
+                                >
+                                    <ChevronRight className="w-6 h-6" />
+                                </button>
+                            )}
 
-                        {/* Next */}
-                        {lightboxIndex !== null && activeSubGroup && lightboxIndex < activeSubGroup.images.length - 1 && (
-                            <button
-                                className="absolute right-6 top-1/2 -translate-y-1/2 p-3 bg-white/5 hover:bg-[#C9A84C] hover:text-[#070b09] rounded-sm text-white transition-all duration-300 z-20 border border-white/10"
-                                onClick={(e) => { e.stopPropagation(); goNext() }}
-                            >
-                                <ChevronRight className="w-6 h-6" />
-                            </button>
-                        )}
-
-                        {/* Image Showcase */}
-                        <div className="max-w-[90vw] max-h-[85vh] flex flex-col items-center pt-20" onClick={(e) => e.stopPropagation()}>
-                            {lightboxUrl && (
-                                isExternal(lightboxUrl) ? (
+                            {/* Image Display — always use <img> for reliability with external URLs */}
+                            <div className="w-full h-full flex items-center justify-center px-16 md:px-24 py-6">
+                                {lightboxUrl ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img
-                                        src={lightboxUrl}
+                                        key={lightboxUrl}
+                                        src={toSizedImageUrl(lightboxImage.image_url, 1600) || lightboxUrl}
                                         alt={lightboxImage.title}
-                                        className="max-w-full max-h-[70vh] object-contain rounded-sm shadow-2xl border border-white/10"
+                                        className="max-w-full max-h-full object-contain rounded-sm select-none"
+                                        style={{
+                                            filter: 'drop-shadow(0 25px 60px rgba(0,0,0,0.6))',
+                                        }}
+                                        draggable={false}
                                     />
                                 ) : (
-                                    <Image
-                                        src={lightboxUrl}
-                                        alt={lightboxImage.title}
-                                        width={1200}
-                                        height={800}
-                                        className="max-w-full max-h-[70vh] object-contain rounded-sm shadow-2xl border border-white/10"
-                                        quality={95}
-                                        priority
-                                    />
-                                )
-                            )}
-                            <div className="text-center mt-4 max-w-xl">
-                                {lightboxImage.description && (
-                                    <p className="text-white/70 text-sm font-light leading-relaxed">{lightboxImage.description}</p>
+                                    <div className="flex flex-col items-center gap-3 text-white/30">
+                                        <Camera className="w-12 h-12" />
+                                        <p className="text-sm font-accent tracking-wider uppercase">Image unavailable</p>
+                                    </div>
                                 )}
                             </div>
                         </div>
 
-                        {/* Thumbnail Bar */}
-                        {activeSubGroup && activeSubGroup.images.length > 1 && (
-                            <div className="absolute bottom-0 left-0 right-0 px-6 py-4 z-20 bg-[#070b09]/80 backdrop-blur-md border-t border-white/10">
-                                <div className="flex gap-2.5 justify-center overflow-x-auto max-w-3xl mx-auto pb-1">
+                        {/* ── Bottom Filmstrip ── */}
+                        {activeSubGroup && totalImages > 1 && (
+                            <div className="flex-shrink-0 border-t border-white/8 bg-[#070b09]/80 backdrop-blur-xl py-3 px-4 md:px-8">
+                                <div className="flex gap-2 justify-center overflow-x-auto max-w-4xl mx-auto scrollbar-hide">
                                     {activeSubGroup.images.map((img, i) => {
-                                        const thumbUrl = toDirectImageUrl(img.image_url)
+                                        const thumbUrl = toSizedImageUrl(img.image_url, 200)
+                                        const isActive = i === lightboxIndex
                                         return (
                                             <button
                                                 key={img.id}
-                                                onClick={(e) => { e.stopPropagation(); setLightboxIndex(i) }}
-                                                className={`flex-shrink-0 w-16 h-12 rounded-sm overflow-hidden border-2 transition-all duration-200 ${
-                                                    i === lightboxIndex
-                                                        ? 'border-[#C9A84C] scale-105'
-                                                        : 'border-white/20 opacity-40 hover:opacity-80'
+                                                onClick={() => setLightboxIndex(i)}
+                                                className={`flex-shrink-0 rounded-sm overflow-hidden transition-all duration-300 ${
+                                                    isActive
+                                                        ? 'w-20 h-14 md:w-24 md:h-16 ring-2 ring-[#C9A84C] ring-offset-1 ring-offset-[#070b09] opacity-100 scale-105'
+                                                        : 'w-16 h-11 md:w-20 md:h-14 opacity-35 hover:opacity-70 hover:scale-[1.02]'
                                                 }`}
                                             >
-                                                {thumbUrl && renderImage(img.image_url, img.title, true, false, img.focus_point, 'object-cover')}
+                                                {thumbUrl && (
+                                                    // eslint-disable-next-line @next/next/no-img-element
+                                                    <img
+                                                        src={thumbUrl!}
+                                                        alt={img.title}
+                                                        className="w-full h-full object-cover"
+                                                        loading="lazy"
+                                                    />
+                                                )}
                                             </button>
                                         )
                                     })}

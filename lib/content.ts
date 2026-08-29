@@ -167,3 +167,25 @@ export function toDirectImageUrl(url: string | null): string | null {
     // Already a direct URL or local path
     return url
 }
+
+/**
+ * Returns a size-optimized image URL.
+ * For lh3.googleusercontent.com URLs, appends =wNNN to request a resized version.
+ * This dramatically reduces bandwidth — e.g. =w400 for thumbnails vs =w1600 for lightbox.
+ *
+ * @param url - raw image URL from DB
+ * @param width - desired width in pixels (e.g. 400 for tiles, 800 for sub-group, 1600 for lightbox)
+ */
+export function toSizedImageUrl(url: string | null, width: number): string | null {
+    const directUrl = toDirectImageUrl(url)
+    if (!directUrl) return null
+
+    // Only append sizing to Google's image CDN
+    if (directUrl.includes('lh3.googleusercontent.com')) {
+        // Strip any existing size params and append new one
+        const base = directUrl.replace(/=[swh]\d+.*$/, '')
+        return `${base}=w${width}`
+    }
+
+    return directUrl
+}
