@@ -278,3 +278,40 @@ p {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Shimmer skeleton loader for gallery tiles */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.gallery-skeleton {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: #0d1210;
+  overflow: hidden;
+}
+
+.gallery-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(201, 168, 76, 0.04) 25%,
+    rgba(201, 168, 76, 0.08) 50%,
+    rgba(201, 168, 76, 0.04) 75%,
+    transparent 100%
+  );
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.gallery-skeleton-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(201, 168, 76, 0.15);
+}

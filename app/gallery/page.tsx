@@ -119,46 +119,64 @@ export default function GalleryPage() {
         if (!sizedUrl && !directUrl) return null
         const src = sizedUrl || directUrl!
 
+        // Shimmer skeleton that sits behind the image
+        const skeleton = (
+            <div className="gallery-skeleton">
+                <div className="gallery-skeleton-icon">
+                    <Camera className="w-8 h-8" />
+                </div>
+            </div>
+        )
+
         if (isExternal(src)) {
             return (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                    src={src}
-                    alt={alt}
-                    className={className || 'w-full h-full object-cover'}
-                    style={focusPoint !== undefined ? { objectPosition: `center ${focusPoint}%` } : undefined}
-                    loading={priority ? 'eager' : 'lazy'}
-                />
+                <>
+                    {skeleton}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                        src={src}
+                        alt={alt}
+                        className={`relative z-[2] ${className || 'w-full h-full object-cover'}`}
+                        style={focusPoint !== undefined ? { objectPosition: `center ${focusPoint}%` } : undefined}
+                        loading={priority ? 'eager' : 'lazy'}
+                    />
+                </>
             )
         }
 
         if (fill) {
             return (
+                <>
+                    {skeleton}
+                    <Image
+                        src={src}
+                        alt={alt}
+                        fill
+                        className={`z-[2] ${className || 'object-cover'}`}
+                        style={focusPoint !== undefined ? { objectPosition: `center ${focusPoint}%` } : undefined}
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        priority={priority}
+                        quality={85}
+                    />
+                </>
+            )
+        }
+
+        return (
+            <>
+                {skeleton}
                 <Image
                     src={src}
                     alt={alt}
-                    fill
-                    className={className || 'object-cover'}
+                    width={imageWidth}
+                    height={Math.round(imageWidth * 0.75)}
+                    className={`relative z-[2] ${className || 'w-full h-full object-cover'}`}
                     style={focusPoint !== undefined ? { objectPosition: `center ${focusPoint}%` } : undefined}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     priority={priority}
                     quality={85}
                 />
-            )
-        }
-
-        return (
-            <Image
-                src={src}
-                alt={alt}
-                width={imageWidth}
-                height={Math.round(imageWidth * 0.75)}
-                className={className || 'w-full h-full object-cover'}
-                style={focusPoint !== undefined ? { objectPosition: `center ${focusPoint}%` } : undefined}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                priority={priority}
-                quality={85}
-            />
+            </>
         )
     }
 
